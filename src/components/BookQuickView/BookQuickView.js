@@ -20,15 +20,16 @@ class BookQuickView extends Component {
     if (!Object.keys(bookGRData).length > 0) return null;
 
     return (
-      <div>
+      <div className={classes.gridContainer}>
         {bookGRData.authors.map(author => (
-          <Typography
-            key={author.id}
-            className={classes.author}
-            variant="body1"
-          >
-            {author.name}
-          </Typography>
+          <div key={author.id} className={classes.authorContainer}>
+            <Typography
+              className={classes.author}
+              variant="body1"
+            >
+              {author.name}
+            </Typography>
+          </div>
         ))}
       </div>
     );

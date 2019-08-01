@@ -10,8 +10,8 @@ export default theme => ({
   },
   details: {
     display: "flex",
-    alignItems: "flex-start",
-    justifyContent: "space-around",
+    alignItems: "center",
+    justifyContent: "flex-start",
     marginBottom: theme.spacing(2)
   },
   imageWrapper: {
@@ -46,24 +46,31 @@ export default theme => ({
     marginTop: theme.spacing(1),
     display: "flex",
     fontSize: "12px",
-    lineHeight: "14px"
+    textAlign: "center",
+    lineHeight: "22px",
+    fontFamily: "Roboto, Helvetica, Arial, sans-serif"
+  },
+  gridContainer: {
+    display: "flex",
+    flexDirection: "row",
+    flexBasis: "max-content"
+  },
+  authorContainer: {
+    width: "auto",
+    maxWidth: "250px",
+    minWidth: "30px",
+    height: "25px",
+    borderRadius: "30px",
+    background: "linear-gradient(to right, #ff647c, #fdafbb)",
+    marginBottom: theme.spacing(1.5),
+    marginLeft: theme.spacing(1),
+    whiteSpace: "nowrap",
+    padding: "0 12px"
   },
   author: {
-    display: "block",
-    marginBottom: theme.spacing(0.25),
-    marginLeft: theme.spacing(1),
+    display: "inline-block",
     fontSize: "10px",
-    lineHeight: "14px",
-    color: theme.palette.text.secondary
-  },
-  description: {
-    lineHeight: "16px",
-    height: theme.spacing(4),
-    overflow: "hidden",
-    whiteSpace: "nowrap",
-    textOverflow: "ellipsis",
-    color: theme.palette.text.secondary,
-    textAlign: "center",
-    marginTop: theme.spacing(1)
+    lineHeight: "25px",
+    color: theme.palette.common.white
   }
 });

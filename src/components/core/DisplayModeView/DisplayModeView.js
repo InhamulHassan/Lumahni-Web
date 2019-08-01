@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import classNames from "classnames";
 
 // Material , components, helpers
-import { withStyles } from "@material-ui/core";
+import { Tooltip, withStyles } from "@material-ui/core";
 
 // Material components
 import { List as ListIcon, Apps as AppsIcon } from "@material-ui/icons";
@@ -27,7 +27,9 @@ const DisplayModeView = props => {
         })}
         onClick={onChange}
       >
-        <AppsIcon className={classes.displayIcon} />
+        <Tooltip title="Grid View" aria-label="Grid View" placement="bottom">
+          <AppsIcon className={classes.displayIcon} />
+        </Tooltip>
       </span>
       <span className={classes.divider} />
       <span
@@ -37,7 +39,9 @@ const DisplayModeView = props => {
         })}
         onClick={onChange}
       >
-        <ListIcon className={classes.displayIcon} />
+        <Tooltip title="List View" aria-label="List View" placement="bottom">
+          <ListIcon className={classes.displayIcon} />
+        </Tooltip>
       </span>
     </div>
   );

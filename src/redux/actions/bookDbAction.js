@@ -10,31 +10,35 @@ import {
   ADD_BOOK_PENDING,
   ADD_BOOK_SUCCESS,
   ADD_BOOK_FAILURE,
-  ADD_BOOK_RESET
+  ADD_BOOK_RESET,
+  EDIT_BOOK_PENDING,
+  EDIT_BOOK_SUCCESS,
+  EDIT_BOOK_FAILURE,
+  EDIT_BOOK_RESET
 } from "./types";
 
 import axios from "axios";
 
 const URL = `${process.env.REACT_APP_DEVELOPMENT_SERVER_URL}/book`;
 
-export const getBooksPending = () => ({
+const getBooksPending = () => ({
   type: GET_ALL_BOOKS_PENDING,
   dataLoading: true
 });
 
-export const getBooksSuccess = json => ({
+const getBooksSuccess = json => ({
   type: GET_ALL_BOOKS_SUCCESS,
   dataLoading: false,
   payload: json
 });
 
-export const getBooksFailure = error => ({
+const getBooksFailure = error => ({
   type: GET_ALL_BOOKS_FAILURE,
   dataLoading: false,
   payload: error
 });
 
-export const getBooksReset = () => ({
+const getBooksReset = () => ({
   type: GET_ALL_BOOKS_RESET
 });
 
@@ -58,24 +62,24 @@ export const resetGetBooks = () => {
   };
 };
 
-export const getBookByIdPending = () => ({
+const getBookByIdPending = () => ({
   type: GET_BOOK_BY_ID_PENDING,
   dataLoading: true
 });
 
-export const getBookByIdSuccess = json => ({
+const getBookByIdSuccess = json => ({
   type: GET_BOOK_BY_ID_SUCCESS,
   dataLoading: false,
   payload: json
 });
 
-export const getBookByIdFailure = error => ({
+const getBookByIdFailure = error => ({
   type: GET_BOOK_BY_ID_FAILURE,
   dataLoading: false,
   payload: error
 });
 
-export const getBookByIdReset = () => ({
+const getBookByIdReset = () => ({
   type: GET_BOOK_BY_ID_RESET
 });
 
@@ -98,24 +102,24 @@ export const resetGetBookById = () => {
   };
 };
 
-export const addBookPending = () => ({
+const addBookPending = () => ({
   type: ADD_BOOK_PENDING,
   dataLoading: true
 });
 
-export const addBookSuccess = id => ({
+const addBookSuccess = id => ({
   type: ADD_BOOK_SUCCESS,
   dataLoading: false,
   payload: id
 });
 
-export const addBookFailure = error => ({
+const addBookFailure = error => ({
   type: ADD_BOOK_FAILURE,
   dataLoading: false,
   payload: error
 });
 
-export const addBookReset = () => ({
+const addBookReset = () => ({
   type: ADD_BOOK_RESET
 });
 
@@ -139,8 +143,60 @@ export const addBook = data => {
   };
 };
 
-export const resetaddBook = () => {
+export const resetAddBook = () => {
   return dispatch => {
     dispatch(addBookReset());
+  };
+};
+
+const editBookPending = () => ({
+  type: EDIT_BOOK_PENDING,
+  dataLoading: true
+});
+
+const editBookSuccess = data => ({
+  type: EDIT_BOOK_SUCCESS,
+  dataLoading: false,
+  payload: data
+});
+
+const editBookFailure = error => ({
+  type: EDIT_BOOK_FAILURE,
+  dataLoading: false,
+  payload: error
+});
+
+const editBookReset = () => ({
+  type: EDIT_BOOK_RESET
+});
+
+export const editBook = data => {
+  return async dispatch => {
+    try {
+      let response = await axios.put(`${URL}/${data.id}`, {
+        grid: data.grid,
+        title: data.bookTitle,
+        descr: data.description,
+        isbn: data.isbn,
+        isbn13: data.isbn13,
+        img: data.imgLink,
+        img_thumbnail: data.imgThumbnailLink
+      });
+      dispatch(editBookPending());
+      const result = response.data;
+      if (result.success) {
+        dispatch(editBookSuccess(result.changesMade));
+      } else {
+        dispatch(editBookFailure("Failed"));
+      }
+    } catch (error) {
+      dispatch(editBookFailure(error));
+    }
+  };
+};
+
+export const resetEditBook = () => {
+  return dispatch => {
+    dispatch(editBookReset());
   };
 };

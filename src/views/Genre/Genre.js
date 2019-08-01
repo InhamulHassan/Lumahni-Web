@@ -185,23 +185,29 @@ class Genre extends Component {
   // }
 
   render() {
-    const { classes } = this.props;
+    const { error, classes } = this.props;
 
     return (
       <CoreLayout title="Genre">
-        <div className={classes.root}>
-          <BookToolbar />
-          <div className={classes.content}>{this.renderGenres()}</div>
-          <div className={classes.pagination}>
-            <Typography variant="caption">1-6 of 20</Typography>
-            <IconButton>
-              <ChevronLeftIcon />
-            </IconButton>
-            <IconButton>
-              <ChevronRightIcon />
-            </IconButton>
+        {error ? (
+          <div className={classes.errorWrapper}>
+            <Typography variant="h4">{error.message || ""}</Typography>
           </div>
-        </div>
+        ) : (
+          <div className={classes.root}>
+            <BookToolbar />
+            <div className={classes.content}>{this.renderGenres()}</div>
+            <div className={classes.pagination}>
+              <Typography variant="caption">1-6 of 20</Typography>
+              <IconButton>
+                <ChevronLeftIcon />
+              </IconButton>
+              <IconButton>
+                <ChevronRightIcon />
+              </IconButton>
+            </div>
+          </div>
+        )}
       </CoreLayout>
     );
   }

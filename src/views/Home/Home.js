@@ -41,23 +41,14 @@ class Home extends Component {
     super(props);
 
     this.signal = true;
-    this.titleInput = React.createRef();
-    this.descriptionInput = React.createRef();
-    this.isbnInput = React.createRef();
-    this.isbn13Input = React.createRef();
-    this.grIdInput = React.createRef();
-    this.imgLinkLargeInput = React.createRef();
-    this.imgLinkMediumInput = React.createRef();
-    this.imgLinkSmallInput = React.createRef();
+    // this.state = {
+    //   isLoading: true,
+    //   limit: 6,
+    //   products: [],
+    //   productsTotal: 0,
+    //   error: null
+    // };
   }
-
-  // state = {
-  //   isLoading: true,
-  //   limit: 6,
-  //   products: [],
-  //   productsTotal: 0,
-  //   error: null
-  // };
 
   componentDidMount() {
     this.signal = true;
@@ -67,6 +58,7 @@ class Home extends Component {
 
   componentWillUnmount() {
     this.signal = false;
+    this.props.resetGetBooks();
   }
 
   renderBooks() {
@@ -95,7 +87,16 @@ class Home extends Component {
       <Grid container spacing={3}>
         {books.map(book => (
           <Grid item key={book.id} lg={2} md={4} xs={6}>
-            <Link className={classes.link} to={`/book/${book.id}`}>
+            <Link
+              className={classes.link}
+              to={{
+                pathname: "/book",
+                state: {
+                  id: book.id,
+                  grid: book.grid
+                }
+              }}
+            >
               <BookCardGrid book={book} />
             </Link>
           </Grid>
@@ -105,23 +106,31 @@ class Home extends Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { error, classes } = this.props;
 
     return (
       <CoreLayout title="Home">
-        <div className={classes.root}>
-          <BookToolbar />
-          <div className={classes.content}>{this.renderBooks()}</div>
-          <div className={classes.pagination}>
-            <Typography variant="caption">1-6 of 20</Typography>
-            <IconButton>
-              <ChevronLeftIcon />
-            </IconButton>
-            <IconButton>
-              <ChevronRightIcon />
-            </IconButton>
+        {error ? (
+          <div className={classes.errorWrapper}>
+            <Typography variant="h4">
+              {error.message || ""}
+            </Typography>
           </div>
-        </div>
+        ) : (
+          <div className={classes.root}>
+            <BookToolbar />
+            <div className={classes.content}>{this.renderBooks()}</div>
+            <div className={classes.pagination}>
+              <Typography variant="caption">1-6 of 20</Typography>
+              <IconButton>
+                <ChevronLeftIcon />
+              </IconButton>
+              <IconButton>
+                <ChevronRightIcon />
+              </IconButton>
+            </div>
+          </div>
+        )}
       </CoreLayout>
     );
   }
@@ -149,8 +158,7 @@ Home.defaultProps = {
 Home.propTypes = {
   classes: PropTypes.object.isRequired,
   books: PropTypes.array.isRequired,
-  loading: PropTypes.bool.isRequired,
-  error: PropTypes.string.isRequired
+  loading: PropTypes.bool.isRequired
 };
 
 export default connect(

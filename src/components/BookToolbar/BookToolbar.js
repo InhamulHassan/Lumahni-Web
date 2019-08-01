@@ -5,28 +5,28 @@ import PropTypes from "prop-types";
 import classNames from "classnames";
 
 // Material components, helpers
-import { Button, Dialog, Slide, withStyles } from "@material-ui/core";
+import { Button, Dialog, withStyles } from "@material-ui/core";
 
 // Shared components
 import { DisplayModeView, SearchInput } from "../core";
-import { BookFormDialog } from "../BookFormDialog";
+import { FormDialog } from "../FormDialog";
+import { BookFormComponent } from "../BookFormComponent";
+import { TransitionSlide as Transition } from "../TransitionSlide";
 
 // Material icons
-import {
-  Add as AddBookIcon
-} from "@material-ui/icons";
+import { Add as AddBookIcon } from "@material-ui/icons";
 
 // Component styles
 import styles from "./styles";
 
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-
 class BookToolbar extends Component {
-  state = {
-    open: false
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      open: false
+    };
+  }
 
   handleDialogClickOpen = () => {
     this.setState({
@@ -57,7 +57,7 @@ class BookToolbar extends Component {
             onClick={this.handleDialogClickOpen}
           >
             <AddBookIcon className={classes.addIcon} />
-            Add
+            Add Books
           </Button>
           <Dialog
             fullScreen
@@ -65,7 +65,12 @@ class BookToolbar extends Component {
             onClose={this.handleDialogClose}
             TransitionComponent={Transition}
           >
-            <BookFormDialog open={open} handleClose={this.handleDialogClose} />
+            <FormDialog title="Book" handleClose={this.handleDialogClose}>
+              <BookFormComponent
+                handleClose={this.handleDialogClose}
+                open={open}
+              />
+            </FormDialog>
           </Dialog>
         </div>
         <div className={classes.row}>

@@ -6,15 +6,6 @@ import { connect } from "react-redux";
 // Externals
 import PropTypes from "prop-types";
 
-// Material components, helpers
-import { IconButton, withStyles } from "@material-ui/core";
-
-// Material icons
-import {
-  ArrowForwardIosRounded as NextIcon,
-  ArrowBackIosRounded as PrevIcon
-} from "@material-ui/icons";
-
 // Shared services
 import { getGenres } from "../../redux/actions/genreDbAction";
 
@@ -22,7 +13,7 @@ import { getGenres } from "../../redux/actions/genreDbAction";
 import ReactTags from "react-tag-autocomplete";
 
 // Component styles
-import styles from "./styles";
+import "./genreTageChip.css";
 
 class GenreTagChip extends Component {
   constructor(props) {
@@ -30,18 +21,12 @@ class GenreTagChip extends Component {
 
     this.state = {
       tags: [],
-      suggestions: [
-        { id: 3, name: "Bananas" },
-        { id: 4, name: "Mangos" },
-        { id: 5, name: "Lemons" },
-        { id: 6, name: "Apricots" }
-      ]
+      genreSuggesions: [],
+      populated: false
     };
   }
 
   componentDidMount() {
-    this.signal = true;
-    // const { limit } = this.state;
     this.props.getGenres();
   }
 
@@ -56,35 +41,55 @@ class GenreTagChip extends Component {
     this.setState({ tags });
   };
 
+  handleFocus = () => {
+    if (!this.state.populated) {
+      this.populateSuggestions();
+    }
+  };
+
+  populateSuggestions = () => {
+    const { genre, loading } = this.props;
+    let genreSuggesions = [];
+    for (var i = 0; i < genre.length; ++i) {
+      genreSuggesions.push({ id: genre[i]["id"] + 1, name: genre[i]["name"] });
+    }
+
+    if (
+      !loading &&
+      genreSuggesions.length > 0 &&
+      this.state.genreSuggesions.length === 0
+    ) {
+      this.setState({ genreSuggesions, populated: true });
+    }
+  };
+
   render() {
-    const { classes } = this.props;
-    const { suggestions, tags } = this.state;
+    const { genreSuggesions, tags } = this.state;
 
     return (
       <ReactTags
         tags={tags}
-        suggestions={suggestions}
+        suggestions={genreSuggesions}
         handleDelete={this.handleDelete}
         handleAddition={this.handleAddition}
+        handleFocus={this.handleFocus}
+        placeholder="Add new genres"
+        minQueryLength={1}
+        autofocus={false}
       />
     );
   }
 }
 
 GenreTagChip.propTypes = {
-  className: PropTypes.string,
-  classes: PropTypes.object.isRequired,
   getGenres: PropTypes.func.isRequired,
   genre: PropTypes.arrayOf(PropTypes.object.isRequired).isRequired
 };
 
 GenreTagChip.defaultProps = {
-  open: false,
-  close: null,
-  bookGrDetails: {},
-  id: null,
-  loading: false,
-  error: null
+  genre: [],
+  loading: true,
+  error: ""
 };
 
 const mapStateToProps = state => {
@@ -102,4 +107,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(GenreTagChip));
+)(GenreTagChip);

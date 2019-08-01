@@ -2,6 +2,8 @@
 
 export default theme => ({
   root: {
+    width: "100%",
+    height: "100%",
     maxWidth: "100%",
     cursor: "pointer",
     paddingTop: theme.spacing(2),
@@ -34,14 +36,14 @@ export default theme => ({
     textAlign: "center",
     marginTop: theme.spacing(1)
   },
-  description: {
-    lineHeight: "16px",
-    height: theme.spacing(4),
+  author: {
+    fontSize: "10px",
+    lineHeight: "12px",
     overflow: "hidden",
     whiteSpace: "nowrap",
     textOverflow: "ellipsis",
     color: theme.palette.text.secondary,
     textAlign: "center",
-    marginTop: theme.spacing(1)
+    marginTop: theme.spacing(0.25)
   }
 });

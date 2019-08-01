@@ -35,17 +35,18 @@ import {
 } from "../core";
 
 // Custom components
-import { BookQuickView } from "../../components";
+import { BookQuickView, GenreTagChip } from "../../components";
 
 // Shared services
 import {
   addBook,
-  addBookReset,
+  resetAddBook,
   getBooks
 } from "../../redux/actions/bookDbAction";
+
 import {
   getBookByGrId,
-  getBookByGrIdReset
+  resetGetBookByGrId
 } from "../../redux/actions/bookGrAction";
 
 // Component styles
@@ -70,26 +71,20 @@ class BookFormComponent extends Component {
       grid: "",
       imgLink: "",
       imgThumbnailLink: "",
-      errors: {
-        bookTitle: false,
-        description: false,
-        isbn: false,
-        isbn13: false,
-        grid: false,
-        imgLink: false,
-        imgThumbnailLink: false
-      }
+      errors: {},
+      isValid: true
     };
   }
 
   componentDidUpdate() {
-    if(!!this.props.id) {
+    if (!!this.props.id) {
       this.props.handleClose();
     }
   }
 
   componentWillUnmount() {
-    this.props.addBookReset()
+    this.props.resetGetBookByGrId();
+    this.props.resetAddBook();
     this.props.getBooks();
   }
 
@@ -99,6 +94,7 @@ class BookFormComponent extends Component {
     const validIsbn = validateISBN(data);
 
     newState.errors = errors || false;
+    newState.isValid = errors ? false : true;
 
     this.setState(newState);
 
@@ -142,8 +138,8 @@ class BookFormComponent extends Component {
     e.target.value = e.target.value.replace(/[^0-9Xx]/g, "");
   };
 
-  searchByGrid = id => {
-    this.props.getBookByGrId(id);
+  searchByGrid = () => {
+    this.props.getBookByGrId(this.state.grid);
   };
 
   populateFields = () => {
@@ -173,15 +169,31 @@ class BookFormComponent extends Component {
     }
   };
 
+  getSubmitErrorMessage = () => {
+    const { isValid, errors } = this.state;
+    const { classes } = this.props;
+
+    return (
+      !isValid && (
+        <Typography className={classes.fieldError} variant="body2">
+          <ErrorIcon className={classes.errorIcon} />
+          {Object.keys(errors).length +
+            (Object.keys(errors).length <= 1 ? " error" : " errors") +
+            " has been found"}
+        </Typography>
+      )
+    );
+  };
+
   render() {
     const {
       classes,
       className,
       addBook,
-      addBookReset,
+      resetAddBook,
       getBooks,
       getBookByGrId,
-      getBookByGrIdReset,
+      resetGetBookByGrId,
       handleClose,
       id,
       loading,
@@ -193,6 +205,7 @@ class BookFormComponent extends Component {
     } = this.props;
     const { errors } = this.state;
     const rootClassName = classNames(classes.root, className);
+    console.log(bookGrLoading);
 
     return (
       <MainView {...rest} className={rootClassName}>
@@ -282,7 +295,7 @@ class BookFormComponent extends Component {
                 <TextField
                   className={classes.textField}
                   name="grid"
-                  label="Goodreads ID"
+                  label="Goodreads Book ID"
                   helperText="Please specify the Goodreads ID of the book"
                   type="text"
                   value={this.state.grid}
@@ -296,10 +309,10 @@ class BookFormComponent extends Component {
                       <InputAdornment position="end">
                         <IconButton
                           tabIndex="-1"
-                          onClick={() => this.searchByGrid(this.state.grid)}
+                          onClick={this.searchByGrid}
                         >
-                          {bookGrLoading ? (
-                            <CircularProgress size="20" />
+                          {!!bookGrLoading ? (
+                            <CircularProgress size="2" />
                           ) : (
                             <SearchIcon />
                           )}
@@ -337,10 +350,14 @@ class BookFormComponent extends Component {
               </div>
               <div className={classes.groupField}>
                 {Object.keys(bookGrDetails).length > 0 && (
-                  <BookQuickView
-                    bookGRData={bookGrDetails.book}
-                    populateFields={this.populateFields}
-                  />
+                  !!bookGrLoading ? (
+                    <CircularProgress size="2" />
+                  ) : (
+                    <BookQuickView
+                      bookGRData={bookGrDetails.book}
+                      populateFields={this.populateFields}
+                    />
+                  )
                 )}
               </div>
             </div>
@@ -387,9 +404,18 @@ class BookFormComponent extends Component {
                 </Typography>
               )}
             </div>
+            <div className={classes.group}>
+              <Typography className={classes.groupLabel} variant="h6">
+                Book Genres
+              </Typography>
+              <div className={classes.field}>
+                <GenreTagChip />
+              </div>
+            </div>
           </form>
         </MainViewContent>
         <MainViewFooter className={classes.mainViewFooter}>
+          {this.getSubmitErrorMessage()}
           {loading ? (
             <div className={classes.progressWrapper}>
               <CircularProgress />
@@ -427,17 +453,17 @@ const mapStateToProps = state => {
     loading: state.book.dataLoading,
     error: state.book.error,
     bookGrDetails: state.book_gr.bookDetails.data,
-    bookGrLoading: state.book_gr.bookDetails.dataLoading,
-    bookGrError: state.book_gr.bookDetails.error
+    bookGrLoading: state.book_gr.dataLoading,
+    bookGrError: state.book_gr.error
   };
 };
 
 const mapDispatchToProps = {
   addBook,
-  addBookReset,
+  resetAddBook,
   getBooks,
   getBookByGrId,
-  getBookByGrIdReset
+  resetGetBookByGrId
 };
 
 export default connect(

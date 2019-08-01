@@ -12,24 +12,25 @@ import {
 import axios from "axios";
 
 const URL = `${process.env.REACT_APP_DEVELOPMENT_SERVER_URL}/genre`;
-export const getGenresPending = () => ({
+
+const getGenresPending = () => ({
   type: GET_ALL_GENRES_PENDING,
   dataLoading: true
 });
 
-export const getGenresSuccess = json => ({
+const getGenresSuccess = json => ({
   type: GET_ALL_GENRES_SUCCESS,
   dataLoading: false,
   payload: json
 });
 
-export const getGenresFailure = error => ({
+const getGenresFailure = error => ({
   type: GET_ALL_GENRES_FAILURE,
   dataLoading: false,
   payload: error
 });
 
-export const getGenresReset = () => ({
+const getGenresReset = () => ({
   type: GET_ALL_GENRES_RESET
 });
 
@@ -53,24 +54,24 @@ export const resetGetGenres = () => {
   };
 };
 
-export const getGenreByIdPending = () => ({
+const getGenreByIdPending = () => ({
   type: GET_GENRE_BY_ID_PENDING,
   dataLoading: true
 });
 
-export const getGenreByIdSuccess = json => ({
+const getGenreByIdSuccess = json => ({
   type: GET_GENRE_BY_ID_SUCCESS,
   dataLoading: false,
   payload: json
 });
 
-export const getGenreByIdFailure = error => ({
+const getGenreByIdFailure = error => ({
   type: GET_GENRE_BY_ID_FAILURE,
   dataLoading: false,
   payload: error
 });
 
-export const getGenreByIdReset = () => ({
+const getGenreByIdReset = () => ({
   type: GET_GENRE_BY_ID_RESET
 });
 

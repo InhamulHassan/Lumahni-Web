@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 
 // Material components, helpers
-import { IconButton, withStyles } from "@material-ui/core";
+import { IconButton, Tooltip, withStyles } from "@material-ui/core";
 
 // Material icons
 import {
@@ -19,16 +19,23 @@ class ArrowIconButton extends Component {
   render() {
     const { classes, isPrev, onClick } = this.props;
     const style = isPrev ? { left: "-15px" } : { right: "-15px" };
+    const toolTip = isPrev ? "Previous" : "Next";
 
     return (
-      <IconButton
-        className={classes.iconButton}
-        style={style}
-        onClick={onClick}
-        size="medium"
-      >
-        {isPrev ? <PrevIcon fontSize="small" /> : <NextIcon fontSize="small" />}
-      </IconButton>
+      <Tooltip title={toolTip} aria-label={toolTip}>
+        <IconButton
+          className={classes.iconButton}
+          style={style}
+          onClick={onClick}
+          size="medium"
+        >
+          {isPrev ? (
+            <PrevIcon fontSize="small" />
+          ) : (
+            <NextIcon fontSize="small" />
+          )}
+        </IconButton>
+      </Tooltip>
     );
   }
 }

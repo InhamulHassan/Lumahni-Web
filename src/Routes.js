@@ -4,6 +4,7 @@ import { Switch, Route, Redirect } from "react-router-dom";
 import { Home } from "./views/Home";
 import { Genre } from "./views/Genre";
 import { Book } from "./views/Book";
+import { Authors } from "./views/Authors";
 import { Profile } from "./views/Profile";
 import { Settings } from "./views/Settings";
 import { Login } from "./views/Login";
@@ -17,7 +18,8 @@ export default class Routes extends Component {
         <Redirect exact from="/" to="/home" />
         <Route component={Home} exact path="/home" />
         <Route component={Genre} exact path="/genre" />
-        <Route component={Book} exact path="/book/:id" />
+        <Route component={Book} exact path="/book" />
+        <Route component={Authors} exact path="/authors" />
         <Route component={Profile} exact path="/profile" />
         <Route component={Settings} exact path="/settings" />
         <Route component={Login} exact path="/login" />

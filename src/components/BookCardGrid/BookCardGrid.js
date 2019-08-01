@@ -17,26 +17,47 @@ import styles from "./styles";
 
 class BookCardGrid extends Component {
   render() {
-    const { classes, className, book } = this.props;
+    const { classes, className, book, bookGr } = this.props;
 
     const rootClassName = classNames(classes.root, className);
+
+    let bookObject = {};
+
+    if (Object.keys(book).length > 0) {
+      bookObject = {
+        title: book.title,
+        img_url: book.img,
+        author: ""
+      }
+    } else if (Object.keys(bookGr).length > 0) {
+      bookObject = {
+        title: bookGr.title,
+        img_url: bookGr.image_url,
+        author: bookGr.authors[0].name
+      }
+    }
 
     return (
       <div className={rootClassName}>
         <div className={classes.imageWrapper}>
-          <img alt={book.title} className={classes.image} src={book.img} />
+          <img alt={bookObject.title} className={classes.image} src={bookObject.img_url} />
         </div>
         <div className={classes.details}>
           <Typography className={classes.title} variant="h4">
-            {book.title}
+            {bookObject.title}
           </Typography>
-          <Typography className={classes.description} variant="body1">
-            {book.descr}
+          <Typography className={classes.author} variant="subtitle2">
+            {bookObject.author}
           </Typography>
         </div>
       </div>
     );
   }
+}
+
+BookCardGrid.defaultProps = {
+  book: {},
+  bookGr: {}
 }
 
 BookCardGrid.propTypes = {

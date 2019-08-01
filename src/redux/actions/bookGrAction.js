@@ -9,31 +9,30 @@ import axios from "axios";
 
 const URL = `${process.env.REACT_APP_DEVELOPMENT_SERVER_URL}/book_gr`;
 
-export const getBookByGrIdPending = () => ({
+const getBookByGrIdPending = () => ({
   type: GET_BOOK_BY_GRID_PENDING,
   dataLoading: true
 });
 
-export const getBookByGrIdSuccess = json => ({
+const getBookByGrIdSuccess = json => ({
   type: GET_BOOK_BY_GRID_SUCCESS,
   dataLoading: false,
   payload: json
 });
 
-export const getBookByGrIdFailure = error => ({
+const getBookByGrIdFailure = error => ({
   type: GET_BOOK_BY_GRID_FAILURE,
   dataLoading: false,
   payload: error
 });
 
-export const getBookByGrIdReset = () => ({
+const getBookByGrIdReset = () => ({
   type: GET_BOOK_BY_GRID_RESET
 });
 
 export const getBookByGrId = grid => {
   return async dispatch => {
     try {
-      console.log("getbookbyGRID: " + grid);
       let response = await axios({
         url: URL,
         method: "post",
@@ -45,6 +44,11 @@ export const getBookByGrId = grid => {
               description
               isbn
               isbn13
+              average_rating
+              num_pages
+              publisher
+              publication_year
+              language_code
               image_url
               small_image_url
               authors {
@@ -52,6 +56,14 @@ export const getBookByGrId = grid => {
                 name
                 image_url
                 small_image_url
+              }
+              similar_books{
+                id
+                title
+                image_url
+                authors{
+                  name
+                }
               }
             }
           }

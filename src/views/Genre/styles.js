@@ -34,6 +34,12 @@ export default theme => ({
     display: "flex",
     justifyContent: "center"
   },
+  errorWrapper: {
+    paddingTop: "40vh",
+    paddingBottom: "40vh",
+    display: "flex",
+    justifyContent: "center"
+  },
   pagination: {
     marginTop: "24px",
     display: "flex",

@@ -42,12 +42,13 @@ import {
 // } from "@material-ui/icons";
 
 import {
-  DashboardOutlined as DashboardIcon,
-  PeopleOutlined as MemberIcon,
-  CollectionsBookmarkOutlined as BookGenreIcon,
-  AccountBoxOutlined as ProfileIcon,
-  SettingsOutlined as SettingsIcon,
-  PowerSettingsNewOutlined as LogoutIcon
+  DashboardRounded as DashboardIcon,
+  PeopleRounded as MemberIcon,
+  PersonRounded as AuthorIcon,
+  CollectionsBookmarkRounded as BookGenreIcon,
+  AccountBoxRounded as ProfileIcon,
+  SettingsRounded as SettingsIcon,
+  PowerSettingsNewRounded as LogoutIcon
 } from "@material-ui/icons";
 
 // External components
@@ -79,14 +80,14 @@ class CoreSidebar extends Component {
             <Avatar
               alt="Aryan Behzadi"
               className={classes.avatar}
-              src="/images/avatars/avatar_1.png"
-            />
+              src="https://ui-avatars.com/api/?name=Aryan+Behzadi&size=256&bold=true"
+            ></Avatar>
           </Link>
           <Typography className={classes.nameText} variant="h6">
             Aryan Behzadi
           </Typography>
           <Typography className={classes.bioText} variant="caption">
-            Reader
+            Librarian
           </Typography>
         </div>
         <Divider className={classes.profileDivider} />
@@ -100,6 +101,11 @@ class CoreSidebar extends Component {
             to="/genre"
             primaryAttribute="Genre"
             icon={<BookGenreIcon />}
+          />
+          <ListItemLink
+            to="/authors"
+            primaryAttribute="Authors"
+            icon={<AuthorIcon />}
           />
           <ListItemLink
             to="/members"

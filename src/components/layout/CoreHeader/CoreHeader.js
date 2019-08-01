@@ -12,6 +12,7 @@ import {
   IconButton,
   Popover,
   Toolbar,
+  Tooltip,
   Typography,
   withStyles
 } from "@material-ui/core";
@@ -26,7 +27,6 @@ import {
 
 // Shared services
 import { getNotifications } from "../../../data/Notifications";
-
 
 // Custom components
 import { NotificationModal } from "../../../components/NotificationModal";
@@ -108,36 +108,42 @@ class CoreHeader extends Component {
       <Fragment>
         <div className={rootClassName}>
           <Toolbar className={classes.toolbar}>
-            <IconButton
-              className={classes.menuButton}
-              onClick={onToggleSidebar}
-              variant="text"
-              tooltip="Close"
-            >
-              {isSidebarOpen ? <CloseIcon /> : <MenuIcon />}
-            </IconButton>
+            <Tooltip title={isSidebarOpen ? "Close Menu" : "Open Menu"} aria-label={isSidebarOpen ? "Close Menu" : "Open Menu"}>
+              <IconButton
+                className={classes.menuButton}
+                onClick={onToggleSidebar}
+                variant="text"
+                tooltip="Close"
+              >
+                {isSidebarOpen ? <CloseIcon /> : <MenuIcon />}
+              </IconButton>
+            </Tooltip>
             <Typography className={classes.title} variant="h4">
               {title}
             </Typography>
-            <IconButton
-              className={classes.notificationsButton}
-              onClick={this.handleShowNotifications}
-              tooltip="Notifications"
-            >
-              <Badge
-                badgeContent={notificationsCount}
-                color="primary"
-                variant="dot"
+            <Tooltip title="Notifications" aria-label="Notifications">
+              <IconButton
+                className={classes.notificationsButton}
+                onClick={this.handleShowNotifications}
+                tooltip="Notifications"
               >
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              className={classes.signOutButton}
-              onClick={this.handleSignOut}
-            >
-              <InputIcon />
-            </IconButton>
+                <Badge
+                  badgeContent={notificationsCount}
+                  color="primary"
+                  variant="dot"
+                >
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Sign Out" aria-label="Sign Out">
+              <IconButton
+                className={classes.signOutButton}
+                onClick={this.handleSignOut}
+              >
+                <InputIcon />
+              </IconButton>
+            </Tooltip>
           </Toolbar>
         </div>
         <Popover

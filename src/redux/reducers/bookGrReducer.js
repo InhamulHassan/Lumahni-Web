@@ -6,7 +6,7 @@ import {
 } from "../actions/types";
 
 const initialState = {
-  dataLoading: true,
+  dataLoading: false,
   bookDetails: {},
   error: ""
 };
@@ -33,9 +33,9 @@ const bookGrReducer = (state = initialState, action) => {
     case GET_BOOK_BY_GRID_RESET:
       return {
         ...state,
-        dataLoading: false,
-        bookDetails: null,
-        error: null
+        dataLoading: true, //changed
+        bookDetails: {},
+        error: ""
       };
     default:
       return state;
