@@ -78,6 +78,8 @@ class Book extends Component {
     const { classes, bookGrDetails } = this.props;
     if (!Object.keys(bookGrDetails).length > 0) return null;
 
+    if (!bookGrDetails.book) return null;
+
     const length = Object.keys(bookGrDetails.book.authors).length;
 
     return (
@@ -98,6 +100,7 @@ class Book extends Component {
     const { classes, bookDetails } = this.props;
 
     if (!Object.keys(bookDetails).length > 0) return null;
+    if (!bookDetails) return null;
 
     const { descr } = bookDetails;
     return (
@@ -120,6 +123,7 @@ class Book extends Component {
   renderBookDetails = () => {
     const { classes, bookGrDetails } = this.props;
     if (!Object.keys(bookGrDetails).length > 0) return null;
+    if (!bookGrDetails.book) return null;
 
     const {
       isbn,
@@ -160,8 +164,11 @@ class Book extends Component {
     const { classes, bookGrDetails, bookGrLoading, bookGrError } = this.props;
 
     if (!Object.keys(bookGrDetails).length > 0) return null;
+    if (!bookGrDetails.book) return null;
 
     const { similar_books } = bookGrDetails.book;
+
+    if (!similar_books) return null;
 
     const sliderSettings = {
       infinite: false,
@@ -245,12 +252,12 @@ class Book extends Component {
       bookDetails,
       loading,
       error,
+      bookGrDetails,
       bookGrLoading,
       bookGrError
     } = this.props;
 
     const rootClassName = classNames(classes.root, className);
-    console.log("loading: " + loading + " bookGRLoading: " + bookGrLoading);
     return (
       <CoreLayout title={bookDetails.title}>
         {error || bookGrError ? (
@@ -271,7 +278,7 @@ class Book extends Component {
               </IconButton>
             </Tooltip>
             <div>
-              {loading & bookGrLoading ? (
+              {loading || bookGrLoading ? (
                 <div className={classes.progressWrapper}>
                   <CircularProgress />
                 </div>
@@ -305,6 +312,7 @@ class Book extends Component {
                   <MainView className={rootClassName}>
                     <MainViewContent noPadding>
                       <div className={classes.detailsContainer}>
+                        {!!bookGrDetails.book} && (
                         <Typography
                           className={classes.detailsTitle}
                           variant="h4"
@@ -314,8 +322,10 @@ class Book extends Component {
                         <div className={classes.bookDetails}>
                           {this.renderBookDetails()}
                         </div>
+                        )
                       </div>
                       <div className={classes.similarBooksContainer}>
+                        {!!bookGrDetails.book} && (
                         <Typography
                           className={classes.similarBooksTitle}
                           variant="h4"
@@ -325,6 +335,7 @@ class Book extends Component {
                         <div className={classes.similarBooks}>
                           {this.renderSimilarBooks()}
                         </div>
+                        )
                       </div>
                     </MainViewContent>
                   </MainView>

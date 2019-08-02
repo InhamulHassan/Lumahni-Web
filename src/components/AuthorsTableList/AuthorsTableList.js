@@ -91,7 +91,13 @@ class AuthorsTableList extends Component {
   };
 
   render() {
-    const { classes, className, authors } = this.props;
+    const {
+      classes,
+      className,
+      authors,
+      filterQuery,
+      selectedColumn
+    } = this.props;
     const { activeTab, selectedAuthors, rowsPerPage, page } = this.state;
 
     const rootClassName = classNames(classes.root, className);
@@ -122,17 +128,61 @@ class AuthorsTableList extends Component {
               <TableBody>
                 {authors
                   .filter(author => {
-                    if (activeTab === 1) {
-                      return !author.returning;
+                    // if (activeTab === 1) {
+                    //   return !author.returning;
+                    // }
+                    //
+                    // if (activeTab === 2) {
+                    //   return author.returning;
+                    // }
+
+                    if (!filterQuery) return author;
+
+                    switch (selectedColumn) {
+                      case "All":
+                        if (
+                          author.name
+                            .toLowerCase()
+                            .includes(filterQuery.toLowerCase())
+                        )
+                          return author;
+                      case "id":
+                        if (author.id.toString().includes(filterQuery)) return author;
+                      case "grid":
+                        if (author.grid.toString().includes(filterQuery)) return author;
+                      default:
+                        if (
+                          author.name
+                            .toLowerCase()
+                            .includes(filterQuery.toLowerCase())
+                        )
+                          return author;
                     }
 
-                    if (activeTab === 2) {
-                      return author.returning;
-                    }
+                    // if (filterQuery.length > 2) {
+                    //   if (selectedColumn !== "All") {
+                    //     console.log(selectedColumn);
+                    //     if (
+                    //       author[selectedColumn.toString()]
+                    //         .toLowerCase()
+                    //         .includes(filterQuery.toLowerCase())
+                    //     )
+                    //       return author;
+                    //   } else {
+                    //     if (
+                    //       author.name
+                    //         .toLowerCase()
+                    //         .includes(filterQuery.toLowerCase())
+                    //     )
+                    //       return author;
+                    //   }
+                    // } else {
+                    //   return author;
+                    // }
 
-                    return author;
+                    // return author;
                   })
-                  .slice(0, rowsPerPage)
+                  .slice(rowsPerPage * page, rowsPerPage * (page + 1))
                   .map(author => (
                     <TableRow
                       className={classes.tableRow}
@@ -201,7 +251,9 @@ AuthorsTableList.propTypes = {
   classes: PropTypes.object.isRequired,
   onSelect: PropTypes.func,
   onShowDetails: PropTypes.func,
-  authors: PropTypes.array.isRequired
+  authors: PropTypes.array.isRequired,
+  filterQuery: PropTypes.string,
+  selectedColumn: PropTypes.string
 };
 
 AuthorsTableList.defaultProps = {

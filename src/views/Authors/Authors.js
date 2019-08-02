@@ -34,7 +34,9 @@ class Authors extends Component {
       limit: 10,
       authors: [],
       selectedAuthors: [],
-      error: null
+      error: null,
+      searchQuery: "",
+      selectedColumn: ""
     };
   }
 
@@ -52,8 +54,17 @@ class Authors extends Component {
     this.setState({ selectedAuthors });
   };
 
+  handleQueryChange = event => {
+    this.setState({ searchQuery: event.target.value });
+  };
+
+  handleSearchSelect = event => {
+    this.setState({ selectedColumn: event.target.value });
+  };
+
   renderAuthors() {
     const { classes, loading, authors, error } = this.props;
+    const { searchQuery, selectedColumn } = this.state;
 
     if (loading) {
       return (
@@ -71,12 +82,19 @@ class Authors extends Component {
       return <Typography variant="h6">There are no authors found</Typography>;
     }
 
-    return <AuthorsTableList onSelect={this.handleSelect} authors={authors} />;
+    return (
+      <AuthorsTableList
+        onSelect={this.handleSelect}
+        authors={authors}
+        filterQuery={searchQuery}
+        selectedColumn={selectedColumn}
+      />
+    );
   }
 
   render() {
     const { error, classes } = this.props;
-    const { selectedAuthors } = this.state;
+    const { selectedAuthors, selectedColumn } = this.state;
 
     return (
       <CoreLayout title="Authors">
@@ -86,7 +104,17 @@ class Authors extends Component {
           </div>
         ) : (
           <div className={classes.root}>
-            <AuthorsToolbar selectedAuthors={selectedAuthors} />
+            <AuthorsToolbar
+              handleSearch={this.handleQueryChange}
+              selectedAuthors={selectedAuthors}
+              onSelectChange={this.handleSearchSelect}
+              selectedColumn={selectedColumn}
+              menuItems={[
+                { value: "id", name: "Author ID" },
+                { value: "name", name: "Author Name" },
+                { value: "grid", name: "Goodreads ID" }
+              ]}
+            />
             <div className={classes.content}>{this.renderAuthors()}</div>
           </div>
         )}

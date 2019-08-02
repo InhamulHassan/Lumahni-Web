@@ -23,10 +23,6 @@ export default {
     length: {
       is: 10,
       notValid: "^Book ISBN number should have 10 digits"
-    },
-    numericality: {
-      onlyInteger: true,
-      notValid: "^ISBN should only contain numbers"
     }
   },
   isbn13: {
@@ -37,10 +33,6 @@ export default {
     length: {
       is: 13,
       notValid: "^Book ISBN number should have 13 digits"
-    },
-    numericality: {
-      onlyInteger: true,
-      notValid: "^ISBN13 should only contain numbers"
     }
   },
   grid: {

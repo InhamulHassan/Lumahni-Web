@@ -44,7 +44,15 @@ class AuthorsToolbar extends Component {
   };
 
   render() {
-    const { classes, className, selectedAuthors } = this.props;
+    const {
+      classes,
+      className,
+      selectedAuthors,
+      handleSearch,
+      selectedColumn,
+      onSelectChange,
+      menuItems
+    } = this.props;
     const { open } = this.state;
 
     const rootClassName = classNames(classes.root, className);
@@ -76,10 +84,7 @@ class AuthorsToolbar extends Component {
             onClose={this.handleDialogClose}
             TransitionComponent={Transition}
           >
-            <FormDialog
-              title="Author"
-              handleClose={this.handleDialogClose}
-            >
+            <FormDialog title="Author" handleClose={this.handleDialogClose}>
               <AuthorFormComponent
                 handleClose={this.handleDialogClose}
                 open={open}
@@ -91,6 +96,10 @@ class AuthorsToolbar extends Component {
           <SearchInput
             className={classes.searchInput}
             placeholder="Search authors"
+            onChange={handleSearch}
+            selectedValue={selectedColumn}
+            onSelectChange={onSelectChange}
+            menuItems={menuItems}
           />
           <span className={classes.spacer} />
           <DisplayModeView mode="list" />
@@ -103,7 +112,11 @@ class AuthorsToolbar extends Component {
 AuthorsToolbar.propTypes = {
   className: PropTypes.string,
   classes: PropTypes.object.isRequired,
-  selectedAuthors: PropTypes.array
+  selectedAuthors: PropTypes.array,
+  handleSearch: PropTypes.func.isRequired,
+  selectedColumn: PropTypes.string,
+  onSelectChange: PropTypes.func,
+  menuItems: PropTypes.array
 };
 
 AuthorsToolbar.defaultProps = {

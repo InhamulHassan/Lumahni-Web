@@ -180,7 +180,9 @@ export const editBook = data => {
         isbn: data.isbn,
         isbn13: data.isbn13,
         img: data.imgLink,
-        img_thumbnail: data.imgThumbnailLink
+        img_thumbnail: data.imgThumbnailLink,
+        genres: data.genreTags,
+        authors: data.authorTags
       });
       dispatch(editBookPending());
       const result = response.data;

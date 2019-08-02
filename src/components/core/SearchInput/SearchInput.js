@@ -5,7 +5,13 @@ import PropTypes from "prop-types";
 import classNames from "classnames";
 
 // Material components, helpers
-import { Input, withStyles } from "@material-ui/core";
+import {
+  Input,
+  InputBase,
+  MenuItem,
+  Select,
+  withStyles
+} from "@material-ui/core";
 
 // Material icons
 import { Search as SearchIcon } from "@material-ui/icons";
@@ -13,8 +19,72 @@ import { Search as SearchIcon } from "@material-ui/icons";
 // Component styles
 import styles from "./styles";
 
+const BootstrapInput = withStyles(theme => ({
+  root: {
+    "label + &": {
+      marginTop: theme.spacing(3)
+    }
+  },
+  input: {
+    borderRadius: 4,
+    position: "relative",
+    backgroundColor: theme.palette.background.paper,
+    border: "1px solid #ced4da",
+    fontSize: 16,
+    padding: "10px 26px 10px 12px",
+    transition: theme.transitions.create(["border-color", "box-shadow"]),
+    // Use the system font instead of the default Roboto font.
+    fontFamily: [
+      "-apple-system",
+      "BlinkMacSystemFont",
+      '"Segoe UI"',
+      "Roboto",
+      '"Helvetica Neue"',
+      "Arial",
+      "sans-serif",
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"'
+    ].join(","),
+    "&:focus": {
+      borderRadius: 4,
+      borderColor: "#80bdff",
+      boxShadow: "0 0 0 0.2rem rgba(0,123,255,.25)"
+    }
+  }
+}))(InputBase);
+
+const renderSelectMenu = props => {
+  const { selectedValue, onSelectChange, menuItems } = props;
+  if (menuItems.length) {
+    return (
+      <Select
+        value={selectedValue}
+        onChange={onSelectChange}
+        input={<BootstrapInput name="age" id="age-customized-select" />}
+      >
+        <MenuItem value="All">
+          <em>None</em>
+        </MenuItem>
+        {menuItems.map(item => (
+          <MenuItem key={item.value} value={item.value}>{item.name}</MenuItem>
+        ))}
+      </Select>
+    );
+  }
+};
+
 const SearchInput = props => {
-  const { classes, className, onChange, style, ...rest } = props;
+  const {
+    classes,
+    className,
+    onChange,
+    selectedValue,
+    onSelectChange,
+    menuItems,
+    style,
+    ...rest
+  } = props;
 
   const rootClassName = classNames(classes.root, className);
 
@@ -27,6 +97,7 @@ const SearchInput = props => {
         disableUnderline
         onChange={onChange}
       />
+      {renderSelectMenu(props)}
     </div>
   );
 };
@@ -35,11 +106,17 @@ SearchInput.propTypes = {
   className: PropTypes.string,
   classes: PropTypes.object.isRequired,
   onChange: PropTypes.func,
+  selectedValue: PropTypes.string,
+  onSelectChange: PropTypes.func,
+  menuItems: PropTypes.array,
   style: PropTypes.object
 };
 
 SearchInput.defaultProps = {
-  onChange: () => {}
+  onChange: () => {},
+  selectedValue: "",
+  onSelectChange: () => {},
+  menuItems: []
 };
 
 export default withStyles(styles)(SearchInput);

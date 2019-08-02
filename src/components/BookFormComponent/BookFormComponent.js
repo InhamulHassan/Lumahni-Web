@@ -49,6 +49,8 @@ import {
   resetGetBookByGrId
 } from "../../redux/actions/bookGrAction";
 
+import { getGenres } from "../../redux/actions/genreDbAction";
+
 // Component styles
 import styles from "./styles";
 
@@ -72,8 +74,15 @@ class BookFormComponent extends Component {
       imgLink: "",
       imgThumbnailLink: "",
       errors: {},
-      isValid: true
+      isValid: true,
+      genreTags: [],
+      genreSuggesions: [],
+      tagsPopulated: false
     };
+  }
+
+  componentDidMount() {
+    this.props.getGenres();
   }
 
   componentDidUpdate() {
@@ -169,6 +178,43 @@ class BookFormComponent extends Component {
     }
   };
 
+  // Genre Tags Functions
+  handleTagDelete = i => {
+    const genreTags = this.state.genreTags.slice(0);
+    genreTags.splice(i, 1);
+    this.setState({ genreTags });
+  };
+
+  handleTagAddition = tag => {
+    const genreTagArray = this.state.genreTags;
+    if (!genreTagArray.includes(tag)) {
+      const genreTags = [].concat(genreTagArray, tag);
+      this.setState({ genreTags });
+    }
+  };
+
+  handleTagFocus = () => {
+    if (!this.state.populated) {
+      this.populateSuggestions();
+    }
+  };
+
+  populateSuggestions = () => {
+    const { genre, genreLoading } = this.props;
+    let genreSuggesions = [];
+    for (var i = 0; i < genre.length; ++i) {
+      genreSuggesions.push({ id: genre[i]["id"], name: genre[i]["name"] });
+    }
+
+    if (
+      !genreLoading &&
+      genreSuggesions.length > 0 &&
+      this.state.genreSuggesions.length === 0
+    ) {
+      this.setState({ genreSuggesions, tagsPopulated: true });
+    }
+  };
+
   getSubmitErrorMessage = () => {
     const { isValid, errors } = this.state;
     const { classes } = this.props;
@@ -189,26 +235,18 @@ class BookFormComponent extends Component {
     const {
       classes,
       className,
-      addBook,
-      resetAddBook,
-      getBooks,
-      getBookByGrId,
-      resetGetBookByGrId,
-      handleClose,
       id,
       loading,
       error,
       bookGrDetails,
       bookGrLoading,
-      bookGrError,
-      ...rest
+      bookGrError
     } = this.props;
-    const { errors } = this.state;
+    const { errors, genreTags, genreSuggesions } = this.state;
     const rootClassName = classNames(classes.root, className);
-    console.log(bookGrLoading);
 
     return (
-      <MainView {...rest} className={rootClassName}>
+      <MainView className={rootClassName}>
         <MainViewHeader>
           <MainViewLabel
             subtitle="Add the details of the book"
@@ -409,7 +447,13 @@ class BookFormComponent extends Component {
                 Book Genres
               </Typography>
               <div className={classes.field}>
-                <GenreTagChip />
+                <GenreTagChip
+                  genreTags={genreTags}
+                  genreSuggesions={genreSuggesions}
+                  handleTagDelete={this.handleTagDelete}
+                  handleTagAddition={this.handleTagAddition}
+                  handleTagFocus={this.handleTagFocus}
+                />
               </div>
             </div>
           </form>
@@ -449,6 +493,9 @@ BookFormComponent.defaultProps = {
 
 const mapStateToProps = state => {
   return {
+    genre: state.genre.data,
+    genreLoading: state.genre.dataLoading,
+    genreError: state.genre.error,
     id: state.book.bookId,
     loading: state.book.dataLoading,
     error: state.book.error,
@@ -459,6 +506,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
+  getGenres,
   addBook,
   resetAddBook,
   getBooks,
