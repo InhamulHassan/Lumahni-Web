@@ -5,9 +5,9 @@ import {
   GET_BOOK_BY_GRID_RESET
 } from "./types";
 
-import axios from "axios";
+import axios from "../../helpers/axios";
 
-const URL = `${process.env.REACT_APP_DEVELOPMENT_SERVER_URL}/book_gr`;
+const URL = "/book_gr";
 
 const getBookByGrIdPending = () => ({
   type: GET_BOOK_BY_GRID_PENDING,

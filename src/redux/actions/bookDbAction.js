@@ -17,9 +17,9 @@ import {
   EDIT_BOOK_RESET
 } from "./types";
 
-import axios from "axios";
+import axios from "../../helpers/axios";
 
-const URL = `${process.env.REACT_APP_DEVELOPMENT_SERVER_URL}/book`;
+const URL = "/book";
 
 const getBooksPending = () => ({
   type: GET_ALL_BOOKS_PENDING,
@@ -133,10 +133,17 @@ export const addBook = data => {
         isbn: data.isbn,
         isbn13: data.isbn13,
         img: data.imgLink,
-        img_thumbnail: data.imgThumbnailLink
+        img_thumbnail: data.imgThumbnailLink,
+        genres: data.genreTags,
+        authors: data.authorTags
       });
       dispatch(addBookPending());
-      dispatch(addBookSuccess(response.data));
+      const result = response.data;
+      if (result.success) {
+        dispatch(addBookSuccess(result.id));
+      } else {
+        dispatch(addBookFailure("Failed"));
+      }
     } catch (error) {
       dispatch(addBookFailure(error));
     }

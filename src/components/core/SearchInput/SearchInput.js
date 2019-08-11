@@ -60,14 +60,17 @@ const renderSelectMenu = props => {
     return (
       <Select
         value={selectedValue}
+        displayEmpty
         onChange={onSelectChange}
         input={<BootstrapInput name="age" id="age-customized-select" />}
       >
-        <MenuItem value="All">
-          <em>None</em>
-        </MenuItem>
-        {menuItems.map(item => (
-          <MenuItem key={item.value} value={item.value}>{item.name}</MenuItem>
+      <MenuItem value="">
+        <em>All</em>
+      </MenuItem>
+        {menuItems.map((item, index) => (
+          <MenuItem key={index} value={item.value}>
+            {item.name}
+          </MenuItem>
         ))}
       </Select>
     );

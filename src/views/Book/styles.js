@@ -47,7 +47,7 @@ export default theme => ({
     height: "100%",
     objectFit: "cover"
   },
-  bookAuthor: {
+  bookAuthors: {
     width: "auto",
     minHeight: "30px"
   },
@@ -59,7 +59,20 @@ export default theme => ({
   },
   authorContainer: {
     marginLeft: "200px",
+    marginRight: "100px",
     "& div": {
+      display: "inline-block"
+    }
+  },
+  bookGenres: {
+    width: "auto",
+    minHeight: "30px"
+  },
+  genreContainer: {
+    marginLeft: "20px",
+    marginTop: "15px",
+    marginBottom: "15px",
+    "& .genreChipWrapper": {
       display: "inline-block"
     }
   },
@@ -113,8 +126,5 @@ export default theme => ({
   },
   similarBooksTitle: {
     marginBottom: theme.spacing(1.5)
-  },
-  similarBook: {
-    margin: "5px 10px"
   }
 });

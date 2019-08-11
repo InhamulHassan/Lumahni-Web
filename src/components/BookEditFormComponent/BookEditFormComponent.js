@@ -35,7 +35,7 @@ import {
 } from "../core";
 
 // Custom components
-import { BookQuickView, GenreTagChip } from "../../components";
+import { BookQuickView, SuggestionsTagChip } from "../../components";
 
 // Shared services
 import {
@@ -49,18 +49,21 @@ import {
   resetGetBookByGrId
 } from "../../redux/actions/bookGrAction";
 
-import { getGenres } from "../../redux/actions/genreDbAction";
+import {
+  getAuthors,
+  resetGetAuthors
+} from "../../redux/actions/authorDbAction";
 
-import { getAuthors } from "../../redux/actions/authorDbAction";
-
-// Component styles
-import styles from "./styles";
+import { getGenres, resetGetGenres } from "../../redux/actions/genreDbAction";
 
 // Validation Helper
 import { htmlCleaner, validateISBN } from "../../helpers";
 
 // Form validation schema
 import validateSchema from "./validateSchema";
+
+// Component styles
+import styles from "./styles";
 
 class BookFormComponent extends Component {
   constructor(props) {
@@ -88,8 +91,10 @@ class BookFormComponent extends Component {
   }
 
   componentDidMount() {
+    // get all the genres/authors to populate the tag suggestion field
     this.props.getGenres();
     this.props.getAuthors();
+    // populate the form with the book details that needs to be edited
     this.populateForm();
   }
 
@@ -102,8 +107,10 @@ class BookFormComponent extends Component {
   componentWillUnmount() {
     this.props.resetGetBookByGrId();
     this.props.resetEditBook();
-    const { id, grid } = this.props.bookData;
+    this.props.resetGetAuthors();
+    this.props.resetGetGenres();
     // to refresh the book data for the Book View
+    const { id, grid } = this.props.bookData;
     this.props.getBookById(id);
     this.props.getBookByGrId(grid);
   }
@@ -205,28 +212,12 @@ class BookFormComponent extends Component {
       isbn13,
       img,
       img_thumbnail,
-      author_ids,
-      author_names,
-      genre_ids,
-      genre_names
+      genres,
+      authors
     } = this.props.bookData;
 
-    let genres = [];
-    let authors = [];
-
-    if (genre_ids & genre_names) {
-      for (var i = 0; i < genre_ids.length; ++i) {
-        genres.push({ id: genre_ids[i], name: genre_names[i] });
-      }
-    }
-
-    if ((author_ids, author_names)) {
-      for (var j = 0; j < author_ids.length; ++j) {
-        authors.push({ id: author_ids[j], name: author_names[j] });
-      }
-    }
-
-    console.log(JSON.stringify(this.props.bookData));
+    let genreTags = genres || [];
+    let authorTags = authors || [];
 
     if (Object.keys(this.props.bookData).length > 0) {
       this.setState({
@@ -238,8 +229,8 @@ class BookFormComponent extends Component {
         grid: grid,
         imgLink: img,
         imgThumbnailLink: img_thumbnail,
-        genreTags: genres,
-        authorTags: authors
+        genreTags: genreTags,
+        authorTags: authorTags
       });
     }
   };
@@ -516,7 +507,6 @@ class BookFormComponent extends Component {
                   helperText="Please specify the URL for the image of the book cover"
                   label="Image URL"
                   fullWidth
-                  margin="dense"
                   value={this.state.imgLink}
                   variant="outlined"
                   onChange={this.handleChange}
@@ -535,7 +525,6 @@ class BookFormComponent extends Component {
                   helperText="Please specify the URL for the thumbnail image of the book cover"
                   label="Thumbnail Image URL"
                   fullWidth
-                  margin="dense"
                   value={this.state.imgThumbnailLink}
                   variant="outlined"
                   onChange={this.handleChange}
@@ -553,9 +542,9 @@ class BookFormComponent extends Component {
                 Book Genres
               </Typography>
               <div className={classes.field}>
-                <GenreTagChip
-                  genreTags={genreTags}
-                  genreSuggesions={genreSuggesions}
+                <SuggestionsTagChip
+                  tags={genreTags}
+                  suggesions={genreSuggesions}
                   handleTagDelete={this.handleGenreTagDelete}
                   handleTagAddition={this.handleGenreTagAddition}
                   handleTagFocus={this.handleGenreTagFocus}
@@ -566,9 +555,9 @@ class BookFormComponent extends Component {
                 Book Authors
               </Typography>
               <div className={classes.field}>
-                <GenreTagChip
-                  genreTags={authorTags}
-                  genreSuggesions={authorSuggesions}
+                <SuggestionsTagChip
+                  tags={authorTags}
+                  suggesions={authorSuggesions}
                   handleTagDelete={this.handleAuthorTagDelete}
                   handleTagAddition={this.handleAuthorTagAddition}
                   handleTagFocus={this.handleAuthorTagFocus}
@@ -599,8 +588,30 @@ BookFormComponent.propTypes = {
   className: PropTypes.string,
   classes: PropTypes.object.isRequired,
   open: PropTypes.bool.isRequired,
+  bookData: PropTypes.object.isRequired,
   handleClose: PropTypes.func.isRequired,
-  bookData: PropTypes.object.isRequired
+  authors: PropTypes.array.isRequired,
+  genres: PropTypes.array.isRequired,
+  bookDetails: PropTypes.object.isRequired,
+  bookGrDetails: PropTypes.object.isRequired
+};
+
+BookFormComponent.defaultProps = {
+  open: false,
+  handleClose: () => {},
+  bookData: {},
+  authors: [],
+  authorLoading: false,
+  authorError: null,
+  genres: [],
+  genreLoading: false,
+  genreError: "",
+  bookGrDetails: {},
+  bookGrLoading: false,
+  bookGrError: null,
+  bookDetails: {},
+  loading: false,
+  error: null
 };
 
 const mapStateToProps = state => {
@@ -611,18 +622,20 @@ const mapStateToProps = state => {
     genres: state.genre.data,
     genreLoading: state.genre.dataLoading,
     genreError: state.genre.error,
-    bookDetails: state.book.data,
-    loading: state.book.dataLoading,
-    error: state.book.error,
     bookGrDetails: state.book_gr.bookDetails.data,
     bookGrLoading: state.book_gr.dataLoading,
-    bookGrError: state.book_gr.error
+    bookGrError: state.book_gr.error,
+    bookDetails: state.book.bookDetails,
+    loading: state.book.dataLoading,
+    error: state.book.error
   };
 };
 
 const mapDispatchToProps = {
   getAuthors,
+  resetGetAuthors,
   getGenres,
+  resetGetGenres,
   editBook,
   resetEditBook,
   getBookById,

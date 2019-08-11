@@ -5,9 +5,9 @@ import {
   GET_AUTHOR_BY_GRID_RESET
 } from "./types";
 
-import axios from "axios";
+import axios from "../../helpers/axios";
 
-const URL = `${process.env.REACT_APP_DEVELOPMENT_SERVER_URL}/author_gr`;
+const URL = "/author_gr";
 
 const getAuthorByGrIdPending = () => ({
   type: GET_AUTHOR_BY_GRID_PENDING,
@@ -49,6 +49,7 @@ export const getAuthorByGrId = grid => {
               books{
                 id
                 title
+                image_url
               }
             }
           }

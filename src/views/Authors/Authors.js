@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 
 // Redux Helpers
 import { connect } from "react-redux";
@@ -63,7 +64,7 @@ class Authors extends Component {
   };
 
   renderAuthors() {
-    const { classes, loading, authors, error } = this.props;
+    const { classes, authors, loading, error } = this.props;
     const { searchQuery, selectedColumn } = this.state;
 
     if (loading) {
@@ -75,7 +76,7 @@ class Authors extends Component {
     }
 
     if (error) {
-      return <Typography variant="h6">{error}</Typography>;
+      return <Typography variant="h6">{error.message}</Typography>;
     }
 
     if (authors.length === 0) {

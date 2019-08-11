@@ -35,7 +35,7 @@ import {
 } from "../core";
 
 // Custom components
-import { AuthorQuickView, GenreTagChip } from "../../components";
+import { AuthorQuickView, SuggestionsTagChip } from "../../components";
 
 // Shared services
 import {
@@ -48,6 +48,8 @@ import {
   getAuthorByGrId,
   resetGetAuthorByGrId
 } from "../../redux/actions/authorGrAction";
+
+import { getGenres, resetGetGenres } from "../../redux/actions/genreDbAction";
 
 // Component styles
 import styles from "./styles";
@@ -71,8 +73,16 @@ class AuthorFormComponent extends Component {
       imgLargeLink: "",
       imgThumbnailLink: "",
       errors: {},
-      isValid: true
+      isValid: true,
+      genreTags: [],
+      genreSuggesions: [],
+      genreTagsPopulated: false
     };
+  }
+
+  componentDidMount() {
+    // get all the genres to populate the genre tag suggestion field
+    this.props.getGenres();
   }
 
   componentDidUpdate() {
@@ -84,11 +94,12 @@ class AuthorFormComponent extends Component {
   componentWillUnmount() {
     this.props.resetGetAuthorByGrId();
     this.props.resetAddAuthor();
+    this.props.resetGetGenres();
+    // to refresh the authors for the Authors View
     this.props.getAuthors();
   }
 
   validateForm = data => {
-    console.log("data: " + JSON.stringify(data));
     const newState = { ...this.state };
     const errors = validate(data, validateSchema);
 
@@ -160,6 +171,43 @@ class AuthorFormComponent extends Component {
     }
   };
 
+  // Genre Tags Functions
+  handleGenreTagDelete = i => {
+    const genreTags = this.state.genreTags.slice(0);
+    genreTags.splice(i, 1);
+    this.setState({ genreTags });
+  };
+
+  handleGenreTagAddition = tag => {
+    const genreTagArray = this.state.genreTags;
+    if (!genreTagArray.includes(tag)) {
+      const genreTags = [].concat(genreTagArray, tag);
+      this.setState({ genreTags });
+    }
+  };
+
+  handleGenreTagFocus = () => {
+    if (!this.state.genreTagsPopulated) {
+      this.populateGenreSuggestions();
+    }
+  };
+
+  populateGenreSuggestions = () => {
+    const { genres, genreLoading } = this.props;
+    let genreSuggesions = [];
+    for (var i = 0; i < genres.length; ++i) {
+      genreSuggesions.push({ id: genres[i]["id"], name: genres[i]["name"] });
+    }
+
+    if (
+      !genreLoading &&
+      genreSuggesions.length > 0 &&
+      this.state.genreSuggesions.length === 0
+    ) {
+      this.setState({ genreSuggesions, genreTagsPopulated: true });
+    }
+  };
+
   getSubmitErrorMessage = () => {
     const { isValid, errors } = this.state;
     const { classes } = this.props;
@@ -184,9 +232,13 @@ class AuthorFormComponent extends Component {
       error,
       authorGrDetails,
       authorGrLoading,
-      authorGrError,
+      authorGrError
     } = this.props;
-    const { errors } = this.state;
+    const {
+      errors,
+      genreTags,
+      genreSuggesions
+    } = this.state;
     const rootClassName = classNames(classes.root, className);
 
     return (
@@ -264,10 +316,7 @@ class AuthorFormComponent extends Component {
                   InputProps={{
                     endAdornment: !!this.state.grid ? (
                       <InputAdornment position="end">
-                        <IconButton
-                          tabIndex="-1"
-                          onClick={this.searchByGrid}
-                        >
+                        <IconButton tabIndex="-1" onClick={this.searchByGrid}>
                           {!!authorGrLoading ? (
                             <CircularProgress size="2" />
                           ) : (
@@ -290,16 +339,15 @@ class AuthorFormComponent extends Component {
                 </div>
               </div>
               <div className={classes.groupField}>
-                {Object.keys(authorGrDetails).length > 0 && (
-                  !!authorGrLoading ? (
+                {Object.keys(authorGrDetails).length > 0 &&
+                  (!!authorGrLoading ? (
                     <CircularProgress size="2" />
                   ) : (
                     <AuthorQuickView
                       authorGRData={authorGrDetails.author}
                       populateFields={this.populateFields}
                     />
-                  )
-                )}
+                  ))}
               </div>
             </div>
             <div className={classes.group}>
@@ -313,7 +361,6 @@ class AuthorFormComponent extends Component {
                   helperText="Please specify the URL for the image of the author"
                   label="Image URL"
                   fullWidth
-                  margin="dense"
                   value={this.state.imgLink}
                   variant="outlined"
                   onChange={this.handleChange}
@@ -332,7 +379,6 @@ class AuthorFormComponent extends Component {
                   helperText="Please specify the URL for the large image of the author"
                   label="Large Image URL"
                   fullWidth
-                  margin="dense"
                   value={this.state.imgLargeLink}
                   variant="outlined"
                   onChange={this.handleChange}
@@ -351,7 +397,6 @@ class AuthorFormComponent extends Component {
                   helperText="Please specify the URL for the thumbnail image of the author"
                   label="Thumbnail Image URL"
                   fullWidth
-                  margin="dense"
                   value={this.state.imgThumbnailLink}
                   variant="outlined"
                   onChange={this.handleChange}
@@ -369,7 +414,13 @@ class AuthorFormComponent extends Component {
                 Author Genres
               </Typography>
               <div className={classes.field}>
-                <GenreTagChip />
+                <SuggestionsTagChip
+                  tags={genreTags}
+                  suggesions={genreSuggesions}
+                  handleTagDelete={this.handleGenreTagDelete}
+                  handleTagAddition={this.handleGenreTagAddition}
+                  handleTagFocus={this.handleGenreTagFocus}
+                />
               </div>
             </div>
           </form>
@@ -406,15 +457,23 @@ AuthorFormComponent.propTypes = {
 
 AuthorFormComponent.defaultProps = {
   open: false,
-  close: null,
+  handleClose: () => {},
+  genres: {},
+  genreLoading: false,
+  genreError: "",
   authorGrDetails: {},
-  id: null,
+  authorGrLoading: false,
+  authorGrError: null,
+  id: "",
   loading: false,
   error: null
 };
 
 const mapStateToProps = state => {
   return {
+    genres: state.genre.data,
+    genreLoading: state.genre.dataLoading,
+    genreError: state.genre.error,
     id: state.author.authorId,
     loading: state.author.dataLoading,
     error: state.author.error,
@@ -425,6 +484,8 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
+  getGenres,
+  resetGetGenres,
   addAuthor,
   resetAddAuthor,
   getAuthors,

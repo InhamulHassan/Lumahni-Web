@@ -5,19 +5,6 @@ import { Link } from "react-router-dom";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 
-// // Material components, helpers
-// import {
-//   Avatar,
-//   Divider,
-//   List,
-//   ListItem,
-//   ListItemIcon,
-//   ListItemText,
-//   ListSubheader,
-//   Typography,
-//   withStyles
-// } from "@material-ui/core";
-
 // Material components, helpers
 import {
   Avatar,
@@ -28,24 +15,12 @@ import {
   withStyles
 } from "@material-ui/core";
 
-// Material icons
-// import {
-//   DashboardOutlined as DashboardIcon,
-//   PeopleOutlined as PeopleIcon,
-//   ShoppingBasketOutlined as ShoppingBasketIcon,
-//   LockOpenOutlined as LockOpenIcon,
-//   TextFields as TextFieldsIcon,
-//   ImageOutlined as ImageIcon,
-//   InfoOutlined as InfoIcon,
-//   AccountBoxOutlined as AccountBoxIcon,
-//   SettingsOutlined as SettingsIcon
-// } from "@material-ui/icons";
-
 import {
   DashboardRounded as DashboardIcon,
-  PeopleRounded as MemberIcon,
-  PersonRounded as AuthorIcon,
-  CollectionsBookmarkRounded as BookGenreIcon,
+  LibraryBooksRounded as BooksIcon,
+  PeopleRounded as MembersIcon,
+  PersonRounded as AuthorsIcon,
+  CollectionsBookmarkRounded as GenresIcon,
   AccountBoxRounded as ProfileIcon,
   SettingsRounded as SettingsIcon,
   PowerSettingsNewRounded as LogoutIcon
@@ -98,19 +73,24 @@ class CoreSidebar extends Component {
             icon={<DashboardIcon />}
           />
           <ListItemLink
-            to="/genre"
+            to="/books"
+            primaryAttribute="Books"
+            icon={<BooksIcon />}
+          />
+          <ListItemLink
+            to="/genres"
             primaryAttribute="Genre"
-            icon={<BookGenreIcon />}
+            icon={<GenresIcon />}
           />
           <ListItemLink
             to="/authors"
             primaryAttribute="Authors"
-            icon={<AuthorIcon />}
+            icon={<AuthorsIcon />}
           />
           <ListItemLink
             to="/members"
             primaryAttribute="Members"
-            icon={<MemberIcon />}
+            icon={<MembersIcon />}
           />
           <ListItemLink
             to="/profile"

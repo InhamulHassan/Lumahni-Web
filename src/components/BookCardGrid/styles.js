@@ -8,8 +8,6 @@ export default theme => ({
     cursor: "pointer",
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(1),
-    paddingRight: theme.spacing(3),
-    paddingLeft: theme.spacing(3),
     "&:hover $imageWrapper": {
       boxShadow: "0px 0px 15px 5px rgba(0,0,0,0.25)"
     }

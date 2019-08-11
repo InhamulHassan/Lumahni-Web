@@ -35,7 +35,8 @@ class AuthorsTableList extends Component {
     this.state = {
       selectedAuthors: [],
       rowsPerPage: 10,
-      page: 0
+      page: 0,
+      noResults: false
     };
   }
 
@@ -90,6 +91,17 @@ class AuthorsTableList extends Component {
     this.setState({ rowsPerPage: event.target.value });
   };
 
+  isPresent = value => {
+    const { filterQuery } = this.props;
+    const val = value.toString().toLowerCase();
+    const query = filterQuery.toString().toLowerCase();
+    if (val.includes(query)) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   render() {
     const {
       classes,
@@ -98,7 +110,8 @@ class AuthorsTableList extends Component {
       filterQuery,
       selectedColumn
     } = this.props;
-    const { activeTab, selectedAuthors, rowsPerPage, page } = this.state;
+
+    const { selectedAuthors, rowsPerPage, page, noResults } = this.state;
 
     const rootClassName = classNames(classes.root, className);
 
@@ -128,59 +141,40 @@ class AuthorsTableList extends Component {
               <TableBody>
                 {authors
                   .filter(author => {
-                    // if (activeTab === 1) {
-                    //   return !author.returning;
-                    // }
-                    //
-                    // if (activeTab === 2) {
-                    //   return author.returning;
-                    // }
-
-                    if (!filterQuery) return author;
-
-                    switch (selectedColumn) {
-                      case "All":
-                        if (
-                          author.name
-                            .toLowerCase()
-                            .includes(filterQuery.toLowerCase())
-                        )
-                          return author;
-                      case "id":
-                        if (author.id.toString().includes(filterQuery)) return author;
-                      case "grid":
-                        if (author.grid.toString().includes(filterQuery)) return author;
-                      default:
-                        if (
-                          author.name
-                            .toLowerCase()
-                            .includes(filterQuery.toLowerCase())
-                        )
-                          return author;
+                    if (filterQuery) {
+                      switch (selectedColumn) {
+                        case "name":
+                          if (this.isPresent(author.name)) {
+                            return author;
+                          } else {
+                            return null;
+                          }
+                        case "id":
+                          if (this.isPresent(author.id)) {
+                            return author;
+                          } else {
+                            return null;
+                          }
+                        case "grid":
+                          if (this.isPresent(author.grid)) {
+                            return author;
+                          } else {
+                            return null;
+                          }
+                        default:
+                          if (
+                            this.isPresent(author.name) ||
+                            this.isPresent(author.id) ||
+                            this.isPresent(author.grid)
+                          ) {
+                            return author;
+                          } else {
+                            return null;
+                          }
+                      }
+                    } else {
+                      return author;
                     }
-
-                    // if (filterQuery.length > 2) {
-                    //   if (selectedColumn !== "All") {
-                    //     console.log(selectedColumn);
-                    //     if (
-                    //       author[selectedColumn.toString()]
-                    //         .toLowerCase()
-                    //         .includes(filterQuery.toLowerCase())
-                    //     )
-                    //       return author;
-                    //   } else {
-                    //     if (
-                    //       author.name
-                    //         .toLowerCase()
-                    //         .includes(filterQuery.toLowerCase())
-                    //     )
-                    //       return author;
-                    //   }
-                    // } else {
-                    //   return author;
-                    // }
-
-                    // return author;
                   })
                   .slice(rowsPerPage * page, rowsPerPage * (page + 1))
                   .map(author => (
@@ -191,28 +185,39 @@ class AuthorsTableList extends Component {
                       selected={selectedAuthors.indexOf(author.id) !== -1}
                     >
                       <TableCell className={classes.tableCell}>
-                        <div className={classes.tableCellInner}>
-                          <Checkbox
-                            checked={selectedAuthors.indexOf(author.id) !== -1}
-                            color="primary"
-                            onChange={event =>
-                              this.handleSelectOne(event, author.id)
+                        <Link
+                          className={classes.link}
+                          to={{
+                            pathname: "/author",
+                            state: {
+                              id: author.id,
+                              grid: author.grid
                             }
-                            value="true"
-                          />
-                          <Avatar
-                            className={classes.avatar}
-                            src={author.img_s}
-                          />
-                          <Link to="#">
+                          }}
+                        >
+                          <div className={classes.tableCellInner}>
+                            <Checkbox
+                              checked={
+                                selectedAuthors.indexOf(author.id) !== -1
+                              }
+                              color="primary"
+                              onChange={event =>
+                                this.handleSelectOne(event, author.id)
+                              }
+                              value="true"
+                            />
+                            <Avatar
+                              className={classes.avatar}
+                              src={author.img_s}
+                            />
                             <Typography
                               className={classes.nameText}
                               variant="body1"
                             >
                               {author.name}
                             </Typography>
-                          </Link>
-                        </div>
+                          </div>
+                        </Link>
                       </TableCell>
                       <TableCell className={classes.tableCell}>
                         {author.id}

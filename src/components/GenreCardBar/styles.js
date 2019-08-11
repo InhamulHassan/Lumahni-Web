@@ -11,14 +11,15 @@ export default theme => ({
     overflow: "hidden",
     display: "flex",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    cursor: "pointer"
   },
   gradientOverlay: {
     position: "absolute",
     height: "100%",
     width: "100%",
     opacity: "0.75",
-    background: "linear-gradient(to right bottom, #be52f2, #eedff2)",
+    background: "linear-gradient(to right bottom, #be52f2, #eedff2)"
   },
   image: {
     height: "100%",

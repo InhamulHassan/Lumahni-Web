@@ -1,83 +1,183 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
-// Externals
-import PropTypes from "prop-types";
-
 // Redux Helpers
 import { connect } from "react-redux";
+
+// Externals
+import PropTypes from "prop-types";
+import classNames from "classnames";
 
 // Material helpers
 import { withStyles } from "@material-ui/core";
 
 // Material components
 import {
-  IconButton,
   CircularProgress,
-  // Grid,
-  // GridList,
+  IconButton,
+  Tooltip,
   Typography
 } from "@material-ui/core";
 
-// Material icons
-import {
-  ChevronRight as ChevronRightIcon,
-  ChevronLeft as ChevronLeftIcon
-} from "@material-ui/icons";
-
-// Shared layouts
-import { CoreLayout } from "../../layout/CoreLayout";
-
-// Shared services
-// import { getProducts } from "../../data/Products";
-import { getGenres } from "../../redux/actions/genreDbAction";
-
-// Custom components
-import {
-  ArrowIconButton,
-  // BookCardGrid,
-  BookToolbar,
-  GenreCardBar
-} from "../../components";
+// Custom Components
+import ReadMoreReact from "read-more-react";
+import { ArrowIconButton, BookCardGrid } from "../../components";
 
 // React Slick Dependancies
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
+// Material icons
+import { ArrowBackRounded as BackIcon } from "@material-ui/icons";
+
+// Shared layouts
+import { CoreLayout } from "../../layout/CoreLayout";
+import { MainView, MainViewContent } from "../../components/core";
+import { BookEditIcon } from "../../components";
+
+// Shared services
+import {
+  getBookById,
+  resetGetBookById
+} from "../../redux/actions/bookDbAction";
+
+import {
+  getBookByGrId,
+  resetGetBookByGrId
+} from "../../redux/actions/bookGrAction";
+
 // Component styles
 import styles from "./styles";
 
-class Genre extends Component {
-  signal = true;
+class Book extends Component {
+  constructor(props) {
+    super(props);
 
-  // state = {
-  //   isLoading: false,
-  //   limit: 6,
-  //   products: [],
-  //   productsTotal: 0,
-  //   loading: false,
-  //   genre: [],
-  //   error: ""
-  // };
+    this.signal = true;
+  }
 
   componentDidMount() {
     this.signal = true;
-    // const { limit } = this.state;
-    this.props.getGenres();
+    const { id, grid } = this.props.location.state;
+    this.props.getBookById(id);
+    this.props.getBookByGrId(grid);
   }
 
   componentWillUnmount() {
     this.signal = false;
+    this.props.resetGetBookByGrId();
+    this.props.resetGetBookById();
   }
 
-  renderGenres() {
-    const { classes, genre, loading, error } = this.props;
+  goBack = () => {
+    this.props.history.goBack();
+  };
+
+  renderAuthors = () => {
+    const { classes, bookGrDetails } = this.props;
+    if (!Object.keys(bookGrDetails).length > 0) return null;
+
+    if (!bookGrDetails.book) return null;
+
+    const length = Object.keys(bookGrDetails.book.authors).length;
+
+    return (
+      <div className={classes.authorContainer}>
+        {bookGrDetails.book.authors.map((author, index) => (
+          <div key={author.id}>
+            <Typography className={classes.authorName} variant="subtitle2">
+              {author.name}
+              {index < length - 1 ? ", " : ""}
+            </Typography>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  renderBookDescription = () => {
+    const { classes, bookDetails } = this.props;
+
+    if (!Object.keys(bookDetails).length > 0) return null;
+
+    if (!bookDetails) return null;
+
+    const { descr } = bookDetails;
+    return (
+      <Typography
+        className={classes.description}
+        variant="body1"
+        component="div"
+      >
+        <ReadMoreReact
+          text={descr}
+          min={100}
+          ideal={550}
+          max={1000}
+          readMoreText={"read more..."}
+        />
+      </Typography>
+    );
+  };
+
+  renderBookDetails = () => {
+    const { classes, bookGrDetails } = this.props;
+    if (!Object.keys(bookGrDetails).length > 0) return null;
+    if (!bookGrDetails.book) return null;
+
+    const {
+      isbn,
+      isbn13,
+      num_pages,
+      publisher,
+      publication_year,
+      bookDetail
+    } = bookGrDetails.book;
+
+    return (
+      <div className={classes.bookDetailsContainer}>
+        <Typography className={classes.detailsTitle} variant="h4">
+          Book Details
+        </Typography>
+        {this.renderBookDetail(isbn, "ISBN")}
+        {this.renderBookDetail(isbn13, "ISBN13")}
+        {this.renderBookDetail(num_pages, "Pages")}
+        {this.renderBookDetail(publisher, "Publisher")}
+        {this.renderBookDetail(publication_year, "Publication Year")}
+        {this.renderBookDetail(bookDetail, "Language")}
+      </div>
+    );
+  };
+
+  renderBookDetail = (data, label) => {
+    return (
+      !!data && (
+        <Typography className="bookDetail" variant="subtitle1">
+          {label}
+          {": "}
+          <Typography variant="subtitle2" component="span">
+            {data}
+          </Typography>
+        </Typography>
+      )
+    );
+  };
+
+  renderSimilarBooks() {
+    const { classes, bookGrDetails, bookGrLoading, bookGrError } = this.props;
+
+    if (!Object.keys(bookGrDetails).length > 0) return null;
+    if (!bookGrDetails.book) return null;
+
+    const { similar_books } = bookGrDetails.book;
+
+    if (!similar_books) return null;
 
     const sliderSettings = {
-      infinite: true,
+      infinite: false,
       speed: 300,
-      slidesToShow: 9,
+      slidesToShow: 6,
       slidesToScroll: 3,
       initialSlide: 0,
       nextArrow: <ArrowIconButton isPrev={false} />,
@@ -86,7 +186,7 @@ class Genre extends Component {
         {
           breakpoint: 1024,
           settings: {
-            slidesToShow: 8,
+            slidesToShow: 5,
             slidesToScroll: 2,
             infinite: true
           }
@@ -94,21 +194,21 @@ class Genre extends Component {
         {
           breakpoint: 800,
           settings: {
-            slidesToShow: 6,
+            slidesToShow: 4,
             slidesToScroll: 2
           }
         },
         {
           breakpoint: 600,
           settings: {
-            slidesToShow: 4,
+            slidesToShow: 3,
             slidesToScroll: 2
           }
         },
         {
           breakpoint: 480,
           settings: {
-            slidesToShow: 3,
+            slidesToShow: 2,
             slidesToScroll: 1
           }
         },
@@ -122,7 +222,7 @@ class Genre extends Component {
       ]
     };
 
-    if (loading) {
+    if (bookGrLoading) {
       return (
         <div className={classes.progressWrapper}>
           <CircularProgress />
@@ -130,81 +230,115 @@ class Genre extends Component {
       );
     }
 
-    if (error) {
-      return <div className={classes.progressWrapper}>{error}</div>;
+    if (bookGrError) {
+      return <div className={classes.progressWrapper}>{bookGrError}</div>;
     }
 
-    if (genre.length === 0) {
+    if (similar_books.length !== 0) {
       return (
-        <Typography className={classes.noResults} variant="h4">
-          There are no genres available
-        </Typography>
+        <Slider {...sliderSettings}>
+          {similar_books.map(book => (
+            <div key={book.id} className={classes.similarBook}>
+              <Link className={classes.link} to="#">
+                <BookCardGrid bookGr={book} />
+              </Link>
+            </div>
+          ))}
+        </Slider>
       );
     }
-
-    return (
-      <Slider {...sliderSettings}>
-        {genre.map(item => (
-          <Link key={item.id} className={classes.link} to="#">
-            <GenreCardBar genre={item} />
-          </Link>
-        ))}
-      </Slider>
-    );
   }
 
-  // renderProducts() {
-  //   const { classes } = this.props;
-  //   const { isLoading, products } = this.state;
-  //
-  //   if (isLoading) {
-  //     return (
-  //       <div className={classes.progressWrapper}>
-  //         <CircularProgress />
-  //       </div>
-  //     );
-  //   }
-  //
-  //   if (products.length === 0) {
-  //     return (
-  //       <Typography variant="h6">There are no products available</Typography>
-  //     );
-  //   }
-  //
-  //   return (
-  //     <Grid container spacing={3}>
-  //       {products.map(product => (
-  //         <Grid item key={product.id} lg={4} md={6} xs={12}>
-  //           <Link className={classes.link} to="#">
-  //             <BookCardGrid product={product} />
-  //           </Link>
-  //         </Grid>
-  //       ))}
-  //     </Grid>
-  //   );
-  // }
-
   render() {
-    const { error, classes } = this.props;
+    const {
+      classes,
+      className,
+      bookDetails,
+      loading,
+      error,
+      bookGrDetails,
+      bookGrLoading,
+      bookGrError
+    } = this.props;
 
+    const rootClassName = classNames(classes.root, className);
     return (
-      <CoreLayout title="Genre">
-        {error ? (
+      <CoreLayout title={bookDetails.title}>
+        {error || bookGrError ? (
           <div className={classes.errorWrapper}>
-            <Typography variant="h4">{error.message || ""}</Typography>
+            <Typography variant="h4">
+              {error.message || bookGrError.message || ""}
+            </Typography>
           </div>
         ) : (
           <div className={classes.root}>
-            <BookToolbar />
-            <div className={classes.content}>{this.renderGenres()}</div>
-            <div className={classes.pagination}>
-              <Typography variant="caption">1-6 of 20</Typography>
-              <IconButton>
-                <ChevronLeftIcon />
+            <Tooltip title="Go Back" aria-label="Go Back">
+              <IconButton
+                className={classes.backIconButton}
+                onClick={this.goBack}
+                size="medium"
+              >
+                <BackIcon fontSize="small" />
               </IconButton>
-              <IconButton>
-                <ChevronRightIcon />
-              </IconButton>
+            </Tooltip>
+            <div>
+              {loading || bookGrLoading ? (
+                <div className={classes.progressWrapper}>
+                  <CircularProgress />
+                </div>
+              ) : (
+                <div>
+                  <MainView className={rootClassName}>
+                    <MainViewContent noPadding>
+                      <div className={classes.imageWrapper}>
+                        <img
+                          alt={bookDetails.title}
+                          className={classes.image}
+                          src={bookDetails.img}
+                        />
+                      </div>
+                      <div className={classes.editIconContainer}>
+                        <BookEditIcon bookData={bookDetails} />
+                      </div>
+                      <div className={classes.bookTitleContainer}>
+                        <Typography className={classes.bookTitle} variant="h2">
+                          {bookDetails.title}
+                        </Typography>
+                      </div>
+                      <div className={classes.bookAuthor}>
+                        {this.renderAuthors()}
+                      </div>
+                      <div className={classes.bookDescription}>
+                        {this.renderBookDescription()}
+                      </div>
+                    </MainViewContent>
+                  </MainView>
+                  <MainView className={rootClassName}>
+                    <MainViewContent noPadding>
+                      <div className={classes.detailsContainer}>
+                        {!!bookGrDetails.book && (
+                          <div className={classes.bookDetails}>
+                            {this.renderBookDetails()}
+                          </div>
+                        )}
+                      </div>
+                      <div className={classes.similarBooksContainer}>
+                        {!!bookGrDetails.book && (
+                          <div className={classes.similarBooks}>
+                            <Typography
+                              className={classes.similarBooksTitle}
+                              variant="h4"
+                            >
+                              Similar Books
+                            </Typography>
+                            {this.renderSimilarBooks()}
+                          </div>
+                        )}
+                      </div>
+                    </MainViewContent>
+                  </MainView>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -213,25 +347,38 @@ class Genre extends Component {
   }
 }
 
-Genre.propTypes = {
-  classes: PropTypes.object.isRequired,
-  getGenres: PropTypes.func.isRequired,
-  genre: PropTypes.arrayOf(PropTypes.object.isRequired).isRequired
+Book.propTypes = {
+  classes: PropTypes.object.isRequired
+};
+
+Book.defaultProps = {
+  bookDetails: {},
+  loading: true,
+  error: "",
+  bookGrDetails: {},
+  bookGrLoading: true,
+  bookGrError: ""
 };
 
 const mapStateToProps = state => {
   return {
-    genre: state.genre.data,
-    loading: state.genre.dataLoading,
-    error: state.genre.error
+    bookDetails: state.book.bookDetails,
+    loading: state.book.dataLoading,
+    error: state.book.error,
+    bookGrDetails: state.book_gr.bookDetails.data,
+    bookGrLoading: state.book_gr.dataLoading,
+    bookGrError: state.book_gr.error
   };
 };
 
 const mapDispatchToProps = {
-  getGenres
+  getBookById,
+  resetGetBookById,
+  getBookByGrId,
+  resetGetBookByGrId
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(Genre));
+)(withStyles(styles)(Book));

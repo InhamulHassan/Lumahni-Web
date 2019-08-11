@@ -10,12 +10,16 @@ import {
   ADD_AUTHOR_PENDING,
   ADD_AUTHOR_SUCCESS,
   ADD_AUTHOR_FAILURE,
-  ADD_AUTHOR_RESET
+  ADD_AUTHOR_RESET,
+  EDIT_AUTHOR_PENDING,
+  EDIT_AUTHOR_SUCCESS,
+  EDIT_AUTHOR_FAILURE,
+  EDIT_AUTHOR_RESET
 } from "./types";
 
-import axios from "axios";
+import axios from "../../helpers/axios";
 
-const URL = `${process.env.REACT_APP_DEVELOPMENT_SERVER_URL}/author`;
+const URL = "/author";
 
 const getAuthorsPending = () => ({
   type: GET_ALL_AUTHORS_PENDING,
@@ -128,10 +132,16 @@ export const addAuthor = data => {
         bio: data.biography,
         img_m: data.imgLink,
         img_l: data.imgLargeLink,
-        img_s: data.imgThumbnailLink
+        img_s: data.imgThumbnailLink,
+        genres: data.genreTags
       });
       dispatch(addAuthorPending());
-      dispatch(addAuthorSuccess(response.data));
+      const result = response.data;
+      if (result.success) {
+        dispatch(addAuthorSuccess(result.id));
+      } else {
+        dispatch(addAuthorFailure("Failed"));
+      }
     } catch (error) {
       dispatch(addAuthorFailure(error));
     }
@@ -141,5 +151,57 @@ export const addAuthor = data => {
 export const resetAddAuthor = () => {
   return dispatch => {
     dispatch(addAuthorReset());
+  };
+};
+
+const editAuthorPending = () => ({
+  type: EDIT_AUTHOR_PENDING,
+  dataLoading: true
+});
+
+const editAuthorSuccess = data => ({
+  type: EDIT_AUTHOR_SUCCESS,
+  dataLoading: false,
+  payload: data
+});
+
+const editAuthorFailure = error => ({
+  type: EDIT_AUTHOR_FAILURE,
+  dataLoading: false,
+  payload: error
+});
+
+const editAuthorReset = () => ({
+  type: EDIT_AUTHOR_RESET
+});
+
+export const editAuthor = data => {
+  return async dispatch => {
+    try {
+      let response = await axios.put(`${URL}/${data.id}`, {
+        grid: data.grid,
+        name: data.authorName,
+        bio: data.biography,
+        img_m: data.imgLink,
+        img_l: data.imgLargeLink,
+        img_s: data.imgThumbnailLink,
+        genres: data.genreTags
+      });
+      dispatch(editAuthorPending());
+      const result = response.data;
+      if (result.success) {
+        dispatch(editAuthorSuccess(result.changesMade));
+      } else {
+        dispatch(editAuthorFailure("Failed"));
+      }
+    } catch (error) {
+      dispatch(editAuthorFailure(error));
+    }
+  };
+};
+
+export const resetEditAuthor = () => {
+  return dispatch => {
+    dispatch(editAuthorReset());
   };
 };

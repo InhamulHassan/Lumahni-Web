@@ -11,17 +11,11 @@ import styles from "./styles";
 
 class GenreCardBar extends Component {
   render() {
-    const { classes, genre } = this.props;
-    const imgSrc = `${process.env.REACT_APP_DEVELOPMENT_SERVER_URL}/assets/images/${genre.img_s}.jpg`;
-
+    const { classes, genre, onPress } = this.props;
 
     return (
-      <div className={classes.imageWrapper}>
-        <img
-          alt={genre.abbrv}
-          className={classes.image}
-          src={imgSrc}
-        />
+      <div className={classes.imageWrapper} onClick={onPress}>
+        <img alt={genre.abbrv} className={classes.image} src={genre.img_s} />
         <div className={classes.gradientOverlay}></div>
         <Typography className={classes.title} variant="h3">
           {genre.name}
@@ -33,7 +27,9 @@ class GenreCardBar extends Component {
 
 GenreCardBar.propTypes = {
   className: PropTypes.string,
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  genre: PropTypes.object.isRequired,
+  onPress: PropTypes.func.isRequired
 };
 
 export default withStyles(styles)(GenreCardBar);

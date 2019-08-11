@@ -7,13 +7,13 @@ import PropTypes from "prop-types";
 import ReactTags from "react-tag-autocomplete";
 
 // Component styles
-import "./genreTageChip.css";
+import "./SuggestionsTagChip.css";
 
-class GenreTagChip extends Component {
+export default class SuggestionsTagChip extends Component {
   render() {
     const {
-      genreTags,
-      genreSuggesions,
+      tags,
+      suggesions,
       handleTagDelete,
       handleTagAddition,
       handleTagFocus,
@@ -22,8 +22,8 @@ class GenreTagChip extends Component {
 
     return (
       <ReactTags
-        tags={genreTags}
-        suggestions={genreSuggesions}
+        tags={tags}
+        suggestions={suggesions}
         handleDelete={handleTagDelete}
         handleAddition={handleTagAddition}
         handleFocus={handleTagFocus}
@@ -35,19 +35,17 @@ class GenreTagChip extends Component {
   }
 }
 
-GenreTagChip.propTypes = {
-  genreTags: PropTypes.array.isRequired,
-  genreSuggesions: PropTypes.array.isRequired,
+SuggestionsTagChip.propTypes = {
+  tags: PropTypes.array.isRequired,
+  suggesions: PropTypes.array.isRequired,
   handleTagDelete: PropTypes.func.isRequired,
   handleTagAddition: PropTypes.func.isRequired,
   handleTagFocus: PropTypes.func.isRequired,
   placeholder: PropTypes.string.isRequired
 };
 
-GenreTagChip.defaultProps = {
-  genreTags: [],
-  genreSuggesions: [],
+SuggestionsTagChip.defaultProps = {
+  tags: [],
+  suggesions: [],
   placeholder: "Add new tags"
-}
-
-export default GenreTagChip;
+};

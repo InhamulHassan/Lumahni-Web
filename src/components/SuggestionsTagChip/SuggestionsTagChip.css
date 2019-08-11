@@ -1,11 +1,11 @@
 .react-tags {
   position: relative;
-  padding: 10.5px 14px;
+  padding: 17.5px 14px;
   margin: 16px 24px 16px 0;
   height: 1.1875em;
   width: 100%;
   font-size: 1em;
-  line-height: 1.2;
+  line-height: 1;
   cursor: text;
   border-color: rgba(0, 0, 0, 0.23);
   border-style: solid;

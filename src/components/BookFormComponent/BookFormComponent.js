@@ -35,7 +35,7 @@ import {
 } from "../core";
 
 // Custom components
-import { BookQuickView, GenreTagChip } from "../../components";
+import { BookQuickView, SuggestionsTagChip } from "../../components";
 
 // Shared services
 import {
@@ -49,7 +49,9 @@ import {
   resetGetBookByGrId
 } from "../../redux/actions/bookGrAction";
 
-import { getGenres } from "../../redux/actions/genreDbAction";
+import { getAuthors, resetGetAuthors } from "../../redux/actions/authorDbAction";
+
+import { getGenres, resetGetGenres } from "../../redux/actions/genreDbAction";
 
 // Component styles
 import styles from "./styles";
@@ -77,12 +79,17 @@ class BookFormComponent extends Component {
       isValid: true,
       genreTags: [],
       genreSuggesions: [],
-      tagsPopulated: false
+      genreTagsPopulated: false,
+      authorTags: [],
+      authorSuggesions: [],
+      authorTagsPopulated: false
     };
   }
 
   componentDidMount() {
+    // get all the genres/authors to populate the tag suggestion field
     this.props.getGenres();
+    this.props.getAuthors();
   }
 
   componentDidUpdate() {
@@ -94,6 +101,9 @@ class BookFormComponent extends Component {
   componentWillUnmount() {
     this.props.resetGetBookByGrId();
     this.props.resetAddBook();
+    this.props.resetGetAuthors();
+    this.props.resetGetGenres();
+    // to refresh the books for the Books View
     this.props.getBooks();
   }
 
@@ -121,7 +131,9 @@ class BookFormComponent extends Component {
       isbn13,
       grid,
       imgLink,
-      imgThumbnailLink
+      imgThumbnailLink,
+      genreTags,
+      authorTags
     } = this.state;
 
     const formData = {
@@ -131,7 +143,9 @@ class BookFormComponent extends Component {
       isbn13,
       grid,
       imgLink,
-      imgThumbnailLink
+      imgThumbnailLink,
+      genreTags,
+      authorTags
     };
 
     this.validateForm(formData);
@@ -179,13 +193,13 @@ class BookFormComponent extends Component {
   };
 
   // Genre Tags Functions
-  handleTagDelete = i => {
+  handleGenreTagDelete = i => {
     const genreTags = this.state.genreTags.slice(0);
     genreTags.splice(i, 1);
     this.setState({ genreTags });
   };
 
-  handleTagAddition = tag => {
+  handleGenreTagAddition = tag => {
     const genreTagArray = this.state.genreTags;
     if (!genreTagArray.includes(tag)) {
       const genreTags = [].concat(genreTagArray, tag);
@@ -193,17 +207,17 @@ class BookFormComponent extends Component {
     }
   };
 
-  handleTagFocus = () => {
-    if (!this.state.populated) {
-      this.populateSuggestions();
+  handleGenreTagFocus = () => {
+    if (!this.state.genreTagsPopulated) {
+      this.populateGenreSuggestions();
     }
   };
 
-  populateSuggestions = () => {
-    const { genre, genreLoading } = this.props;
+  populateGenreSuggestions = () => {
+    const { genres, genreLoading } = this.props;
     let genreSuggesions = [];
-    for (var i = 0; i < genre.length; ++i) {
-      genreSuggesions.push({ id: genre[i]["id"], name: genre[i]["name"] });
+    for (var i = 0; i < genres.length; ++i) {
+      genreSuggesions.push({ id: genres[i]["id"], name: genres[i]["name"] });
     }
 
     if (
@@ -211,7 +225,44 @@ class BookFormComponent extends Component {
       genreSuggesions.length > 0 &&
       this.state.genreSuggesions.length === 0
     ) {
-      this.setState({ genreSuggesions, tagsPopulated: true });
+      this.setState({ genreSuggesions, genreTagsPopulated: true });
+    }
+  };
+
+  // Author Tags Functions
+  handleAuthorTagDelete = i => {
+    const authorTags = this.state.authorTags.slice(0);
+    authorTags.splice(i, 1);
+    this.setState({ authorTags });
+  };
+
+  handleAuthorTagAddition = tag => {
+    const authorTagArray = this.state.authorTags;
+    if (!authorTagArray.includes(tag)) {
+      const authorTags = [].concat(authorTagArray, tag);
+      this.setState({ authorTags });
+    }
+  };
+
+  handleAuthorTagFocus = () => {
+    if (!this.state.authorTagsPopulated) {
+      this.populateAuthorSuggestions();
+    }
+  };
+
+  populateAuthorSuggestions = () => {
+    const { authors, authorLoading } = this.props;
+    let authorSuggesions = [];
+    for (var i = 0; i < authors.length; ++i) {
+      authorSuggesions.push({ id: authors[i]["id"], name: authors[i]["name"] });
+    }
+
+    if (
+      !authorLoading &&
+      authorSuggesions.length > 0 &&
+      this.state.authorSuggesions.length === 0
+    ) {
+      this.setState({ authorSuggesions, authorTagsPopulated: true });
     }
   };
 
@@ -242,7 +293,13 @@ class BookFormComponent extends Component {
       bookGrLoading,
       bookGrError
     } = this.props;
-    const { errors, genreTags, genreSuggesions } = this.state;
+    const {
+      errors,
+      genreTags,
+      genreSuggesions,
+      authorTags,
+      authorSuggesions
+    } = this.state;
     const rootClassName = classNames(classes.root, className);
 
     return (
@@ -345,10 +402,7 @@ class BookFormComponent extends Component {
                   InputProps={{
                     endAdornment: !!this.state.grid ? (
                       <InputAdornment position="end">
-                        <IconButton
-                          tabIndex="-1"
-                          onClick={this.searchByGrid}
-                        >
+                        <IconButton tabIndex="-1" onClick={this.searchByGrid}>
                           {!!bookGrLoading ? (
                             <CircularProgress size="2" />
                           ) : (
@@ -387,16 +441,15 @@ class BookFormComponent extends Component {
                 </div>
               </div>
               <div className={classes.groupField}>
-                {Object.keys(bookGrDetails).length > 0 && (
-                  !!bookGrLoading ? (
+                {Object.keys(bookGrDetails).length > 0 &&
+                  (!!bookGrLoading ? (
                     <CircularProgress size="2" />
                   ) : (
                     <BookQuickView
                       bookGRData={bookGrDetails.book}
                       populateFields={this.populateFields}
                     />
-                  )
-                )}
+                  ))}
               </div>
             </div>
             <div className={classes.group}>
@@ -410,7 +463,6 @@ class BookFormComponent extends Component {
                   helperText="Please specify the URL for the image of the book cover"
                   label="Image URL"
                   fullWidth
-                  margin="dense"
                   value={this.state.imgLink}
                   variant="outlined"
                   onChange={this.handleChange}
@@ -429,7 +481,6 @@ class BookFormComponent extends Component {
                   helperText="Please specify the URL for the thumbnail image of the book cover"
                   label="Thumbnail Image URL"
                   fullWidth
-                  margin="dense"
                   value={this.state.imgThumbnailLink}
                   variant="outlined"
                   onChange={this.handleChange}
@@ -447,12 +498,25 @@ class BookFormComponent extends Component {
                 Book Genres
               </Typography>
               <div className={classes.field}>
-                <GenreTagChip
-                  genreTags={genreTags}
-                  genreSuggesions={genreSuggesions}
-                  handleTagDelete={this.handleTagDelete}
-                  handleTagAddition={this.handleTagAddition}
-                  handleTagFocus={this.handleTagFocus}
+                <SuggestionsTagChip
+                  tags={genreTags}
+                  suggesions={genreSuggesions}
+                  handleTagDelete={this.handleGenreTagDelete}
+                  handleTagAddition={this.handleGenreTagAddition}
+                  handleTagFocus={this.handleGenreTagFocus}
+                />
+              </div>
+              <Typography className={classes.groupLabel} variant="h6">
+                Book Authors
+              </Typography>
+              <div className={classes.field}>
+                <SuggestionsTagChip
+                  tags={authorTags}
+                  suggesions={authorSuggesions}
+                  handleTagDelete={this.handleAuthorTagDelete}
+                  handleTagAddition={this.handleAuthorTagAddition}
+                  handleTagFocus={this.handleAuthorTagFocus}
+                  placeholder="Add new Authors"
                 />
               </div>
             </div>
@@ -479,21 +543,36 @@ BookFormComponent.propTypes = {
   className: PropTypes.string,
   classes: PropTypes.object.isRequired,
   open: PropTypes.bool.isRequired,
-  handleClose: PropTypes.func.isRequired
+  handleClose: PropTypes.func.isRequired,
+  authors: PropTypes.object.isRequired,
+  genres: PropTypes.object.isRequired,
+  bookDetails: PropTypes.object.isRequired,
+  bookGrDetails: PropTypes.object.isRequired
 };
 
 BookFormComponent.defaultProps = {
   open: false,
-  close: null,
+  handleClose: () => {},
+  authors: {},
+  authorLoading: false,
+  authorError: null,
+  genres: {},
+  genreLoading: false,
+  genreError: "",
   bookGrDetails: {},
-  id: null,
+  bookGrLoading: false,
+  bookGrError: null,
+  id: "",
   loading: false,
   error: null
 };
 
 const mapStateToProps = state => {
   return {
-    genre: state.genre.data,
+    authors: state.author.data,
+    authorLoading: state.author.dataLoading,
+    authorError: state.author.error,
+    genres: state.genre.data,
     genreLoading: state.genre.dataLoading,
     genreError: state.genre.error,
     id: state.book.bookId,
@@ -506,7 +585,10 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
+  getAuthors,
+  resetGetAuthors,
   getGenres,
+  resetGetGenres,
   addBook,
   resetAddBook,
   getBooks,

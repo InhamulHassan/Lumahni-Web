@@ -8,6 +8,9 @@ export default theme => ({
   tableCell: {
     whiteSpace: "nowrap"
   },
+  link: {
+    textDecoration: "none"
+  },
   tableCellInner: {
     display: "flex",
     alignItems: "center"
