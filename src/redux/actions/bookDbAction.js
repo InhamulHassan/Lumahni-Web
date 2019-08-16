@@ -26,10 +26,10 @@ const getBooksPending = () => ({
   dataLoading: true
 });
 
-const getBooksSuccess = json => ({
+const getBooksSuccess = data => ({
   type: GET_ALL_BOOKS_SUCCESS,
   dataLoading: false,
-  payload: json
+  payload: data
 });
 
 const getBooksFailure = error => ({
@@ -45,13 +45,13 @@ const getBooksReset = () => ({
 export const getBooks = () => {
   return async dispatch => {
     try {
+      dispatch(getBooksPending()); //changed position
       let response = await axios.get(URL);
-      dispatch(getBooksPending());
-      let data = await response.data;
-      dispatch(getBooksSuccess(data));
+      let result = response.data;
+      dispatch(getBooksSuccess(result.books));
     } catch (error) {
       console.log(error);
-      dispatch(getBooksFailure(error));
+      dispatch(getBooksFailure(error.message));
     }
   };
 };
@@ -67,10 +67,10 @@ const getBookByIdPending = () => ({
   dataLoading: true
 });
 
-const getBookByIdSuccess = json => ({
+const getBookByIdSuccess = data => ({
   type: GET_BOOK_BY_ID_SUCCESS,
   dataLoading: false,
-  payload: json
+  payload: data
 });
 
 const getBookByIdFailure = error => ({
@@ -86,12 +86,12 @@ const getBookByIdReset = () => ({
 export const getBookById = id => {
   return async dispatch => {
     try {
+      dispatch(getBookByIdPending()); //changed position
       let response = await axios.get(`${URL}/${id}`);
-      dispatch(getBookByIdPending());
-      let json = await response.data;
-      dispatch(getBookByIdSuccess(json));
+      let result = response.data; //removed await
+      dispatch(getBookByIdSuccess(result.book));
     } catch (error) {
-      dispatch(getBookByIdFailure(error));
+      dispatch(getBookByIdFailure(error.message));
     }
   };
 };
@@ -126,6 +126,7 @@ const addBookReset = () => ({
 export const addBook = data => {
   return async dispatch => {
     try {
+      dispatch(addBookPending()); //changed position
       let response = await axios.post(`${URL}`, {
         grid: data.grid,
         title: data.bookTitle,
@@ -137,7 +138,6 @@ export const addBook = data => {
         genres: data.genreTags,
         authors: data.authorTags
       });
-      dispatch(addBookPending());
       const result = response.data;
       if (result.success) {
         dispatch(addBookSuccess(result.id));
@@ -145,7 +145,7 @@ export const addBook = data => {
         dispatch(addBookFailure("Failed"));
       }
     } catch (error) {
-      dispatch(addBookFailure(error));
+      dispatch(addBookFailure(error.message));
     }
   };
 };
@@ -180,6 +180,7 @@ const editBookReset = () => ({
 export const editBook = data => {
   return async dispatch => {
     try {
+      dispatch(editBookPending()); //changed position
       let response = await axios.put(`${URL}/${data.id}`, {
         grid: data.grid,
         title: data.bookTitle,
@@ -191,7 +192,6 @@ export const editBook = data => {
         genres: data.genreTags,
         authors: data.authorTags
       });
-      dispatch(editBookPending());
       const result = response.data;
       if (result.success) {
         dispatch(editBookSuccess(result.changesMade));
@@ -199,7 +199,7 @@ export const editBook = data => {
         dispatch(editBookFailure("Failed"));
       }
     } catch (error) {
-      dispatch(editBookFailure(error));
+      dispatch(editBookFailure(error.message));
     }
   };
 };

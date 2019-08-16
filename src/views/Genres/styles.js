@@ -1,5 +1,4 @@
 // View styles
-import { keyframes } from "styled-components";
 
 export default theme => ({
   root: {
@@ -40,8 +39,14 @@ export default theme => ({
     padding: theme.spacing(3),
     fontFamily: "Roboto, Helvetica, Arial, sans-serif"
   },
+  genreDetailsWrapper: {
+    "&:hover $genreImageWrapper": {
+      top: "-80px"
+    }
+  },
   genreImageWrapper: {
     position: "absolute",
+    zIndex: 10,
     top: "-30px",
     left: "0",
     height: "180px",
@@ -52,7 +57,9 @@ export default theme => ({
     alignItems: "center",
     justifyContent: "center",
     boxShadow: "0px 0px 25px -5px rgba(0,0,0,0.25)",
-    backgroundColor: "linear-gradient(to right, #f6f7f9 0%, #e9ebee 20%, #f6f7f9 40%, #f6f7f9 100%)",
+    backgroundColor:
+      "linear-gradient(to right, #f6f7f9 0%, #e9ebee 20%, #f6f7f9 40%, #f6f7f9 100%)",
+    transition: "all 400ms",
     "&:before": {
       content: "''",
       position: "absolute",
@@ -74,6 +81,12 @@ export default theme => ({
     textShadow: "0 1px 0 rgba(0, 0, 0, 0.2)",
     marginBottom: theme.spacing(1)
   },
+  editIconContainer: {
+    position: "absolute",
+    zIndex: 5,
+    top: "100px",
+    right: "50px"
+  },
   genreDescriptionContainer: {
     marginTop: "150px",
     textAlign: "justify",
@@ -89,12 +102,12 @@ export default theme => ({
   link: {
     textDecoration: "none"
   },
-  noResults: {
-    margin: "5% 15px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center"
-  },
+  // noResults: {
+  //   margin: "5% 15px",
+  //   display: "flex",
+  //   alignItems: "center",
+  //   justifyContent: "center"
+  // },
   progressWrapper: {
     paddingTop: "48px",
     paddingBottom: "24px",

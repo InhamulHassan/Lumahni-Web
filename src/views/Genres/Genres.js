@@ -35,6 +35,7 @@ import {
 import {
   ArrowIconButton,
   BooksTableList,
+  GenreEditIcon,
   GenreToolbar,
   GenreCardBar
 } from "../../components";
@@ -135,7 +136,7 @@ class Genres extends Component {
     }
 
     if (error) {
-      return <div className={classes.errorWrapper}>{error.message}</div>;
+      return <div className={classes.errorWrapper}>{error}</div>;
     }
 
     if (genres.length === 0) {
@@ -167,19 +168,23 @@ class Genres extends Component {
   renderGenreBooks() {
     const { classes, genreBooks, loading, error } = this.props;
 
-    if (!genreBooks.books || genreBooks.books.length === 0) {
-      return (
-        <Typography className={classes.noResults} variant="h6">
-          There are no books found
-        </Typography>
-      );
-    }
-
     if (loading) {
       return (
         <div className={classes.progressWrapper}>
           <CircularProgress />
         </div>
+      );
+    }
+
+    const genreName = genreBooks.name
+      ? genreBooks.name.toString().toLowerCase()
+      : "";
+
+    if (!genreBooks.books || genreBooks.books.length === 0) {
+      return (
+        <Typography className={classes.noResults} variant="h6">
+          There are no books found under the {genreName} section
+        </Typography>
       );
     }
 
@@ -197,14 +202,6 @@ class Genres extends Component {
   renderGenreDetails() {
     const { classes, className, genreBooks, loading, error } = this.props;
 
-    if (!genreBooks) {
-      return (
-        <Typography className={classes.noResults} variant="h6">
-          There are no books found
-        </Typography>
-      );
-    }
-
     if (loading) {
       return (
         <div className={classes.progressWrapper}>
@@ -213,10 +210,18 @@ class Genres extends Component {
       );
     }
 
+    if (!genreBooks) {
+      return (
+        <Typography className={classes.noResults} variant="h6">
+          No genre listed
+        </Typography>
+      );
+    }
+
     if (error) {
       return (
         <Typography className={classes.errorWrapper} variant="h6">
-          {error.message}
+          {error}
         </Typography>
       );
     }
@@ -225,7 +230,7 @@ class Genres extends Component {
 
     return (
       <MainView className={rootClassName}>
-        <MainViewContent noPadding>
+        <MainViewContent className={classes.genreDetailsWrapper} noPadding>
           <div
             className={classes.genreImageWrapper}
             style={{
@@ -238,19 +243,24 @@ class Genres extends Component {
               </Typography>
             </div>
           </div>
+          <div className={classes.editIconContainer}>
+            <GenreEditIcon genreData={genreBooks} />
+          </div>
           <div className={classes.genreDescriptionContainer}>
             <Typography
               className={classes.genreDescription}
               variant="body1"
               component="div"
             >
-              <ReadMoreReact
-                text={genreBooks.descr || ""}
-                min={100}
-                ideal={550}
-                max={1000}
-                readMoreText={"read more..."}
-              />
+              {genreBooks.descr && (
+                <ReadMoreReact
+                  text={genreBooks.descr}
+                  min={100}
+                  ideal={550}
+                  max={1000}
+                  readMoreText={"read more..."}
+                />
+              )}
             </Typography>
           </div>
         </MainViewContent>
@@ -265,7 +275,7 @@ class Genres extends Component {
       <CoreLayout title="Genres">
         {error ? (
           <div className={classes.errorWrapper}>
-            <Typography variant="h4">{error.message || ""}</Typography>
+            <Typography variant="h4">{error}</Typography>
           </div>
         ) : (
           <div className={classes.root}>

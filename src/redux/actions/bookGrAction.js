@@ -14,10 +14,10 @@ const getBookByGrIdPending = () => ({
   dataLoading: true
 });
 
-const getBookByGrIdSuccess = json => ({
+const getBookByGrIdSuccess = data => ({
   type: GET_BOOK_BY_GRID_SUCCESS,
   dataLoading: false,
-  payload: json
+  payload: data
 });
 
 const getBookByGrIdFailure = error => ({
@@ -33,6 +33,7 @@ const getBookByGrIdReset = () => ({
 export const getBookByGrId = grid => {
   return async dispatch => {
     try {
+      dispatch(getBookByGrIdPending()); // changed position
       let response = await axios({
         url: URL,
         method: "post",
@@ -70,12 +71,10 @@ export const getBookByGrId = grid => {
           `
         }
       });
-      dispatch(getBookByGrIdPending());
-      let json = await response.data;
-      dispatch(getBookByGrIdSuccess(json));
+      let result = response.data; // removed await
+      dispatch(getBookByGrIdSuccess(result));
     } catch (error) {
-      console.log("error: " + error);
-      dispatch(getBookByGrIdFailure(error));
+      dispatch(getBookByGrIdFailure(error.message));
     }
   };
 };

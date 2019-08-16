@@ -126,7 +126,8 @@ class BookFormComponent extends Component {
     this.setState(newState);
 
     if (!errors && validIsbn) {
-      this.props.editBook(data).then(this.props.handleClose());
+      // this.props.editBook(data).then(this.props.handleClose());
+      this.props.editBook(data);
     }
   };
 
@@ -318,8 +319,8 @@ class BookFormComponent extends Component {
         <Typography className={classes.fieldError} variant="body2">
           <ErrorIcon className={classes.errorIcon} />
           {Object.keys(errors).length +
-            (Object.keys(errors).length <= 1 ? " error" : " errors") +
-            " has been found"}
+            (Object.keys(errors).length <= 1 ? " error has" : " errors have") +
+            " been found"}
         </Typography>
       )
     );

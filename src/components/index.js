@@ -11,12 +11,16 @@ import { BookToolbar } from "./BookToolbar";
 import { FormDialog } from "./FormDialog";
 import { GenreCardBar } from "./GenreCardBar";
 import { GenreChip } from "./GenreChip";
+import { GenreEditIcon } from "./GenreEditIcon";
 import { GenreToolbar } from "./GenreToolbar";
+import { LoginFormComponent } from "./LoginFormComponent";
+import { LoginInputText } from "./LoginInputText";
 import { MembersTableList } from "./MembersTableList";
 import { MembersToolbar } from "./MembersToolbar";
 import { NotificationModal } from "./NotificationModal";
 import { NotificationSettings } from "./NotificationSettings";
 import { PasswordSettings } from "./PasswordSettings";
+import { PrivateRoute } from "./PrivateRoute";
 import { SuggestionsTagChip } from "./SuggestionsTagChip";
 import { UserDetailView } from "./UserDetailView";
 import { UserProfileCard } from "./UserProfileCard";
@@ -35,12 +39,16 @@ export {
   FormDialog,
   GenreCardBar,
   GenreChip,
+  GenreEditIcon,
   GenreToolbar,
+  LoginFormComponent,
+  LoginInputText,
   MembersTableList,
   MembersToolbar,
   NotificationModal,
   NotificationSettings,
   PasswordSettings,
+  PrivateRoute,
   SuggestionsTagChip,
   UserDetailView,
   UserProfileCard

@@ -7,10 +7,6 @@ import {
   GET_GENRE_BY_ID_SUCCESS,
   GET_GENRE_BY_ID_FAILURE,
   GET_GENRE_BY_ID_RESET,
-  GET_GENRE_BOOKS_PENDING,
-  GET_GENRE_BOOKS_SUCCESS,
-  GET_GENRE_BOOKS_FAILURE,
-  GET_GENRE_BOOKS_RESET,
   ADD_GENRE_PENDING,
   ADD_GENRE_SUCCESS,
   ADD_GENRE_FAILURE,
@@ -18,7 +14,11 @@ import {
   EDIT_GENRE_PENDING,
   EDIT_GENRE_SUCCESS,
   EDIT_GENRE_FAILURE,
-  EDIT_GENRE_RESET
+  EDIT_GENRE_RESET,
+  GET_GENRE_BOOKS_PENDING,
+  GET_GENRE_BOOKS_SUCCESS,
+  GET_GENRE_BOOKS_FAILURE,
+  GET_GENRE_BOOKS_RESET
 } from "../actions/types";
 
 const initialState = {
@@ -80,30 +80,6 @@ const genreDbReducer = (state = initialState, action) => {
         genreDetails: {},
         error: ""
       };
-    case GET_GENRE_BOOKS_PENDING:
-      return {
-        ...state,
-        dataLoading: action.dataLoading
-      };
-    case GET_GENRE_BOOKS_SUCCESS:
-      return {
-        ...state,
-        dataLoading: action.dataLoading,
-        genreBooks: action.payload
-      };
-    case GET_GENRE_BOOKS_FAILURE:
-      return {
-        ...state,
-        dataLoading: action.dataLoading,
-        error: action.payload
-      };
-    case GET_GENRE_BOOKS_RESET:
-      return {
-        ...state,
-        dataLoading: true, //changed
-        genreBooks: {},
-        error: ""
-      };
     case ADD_GENRE_PENDING:
       return {
         ...state,
@@ -150,6 +126,30 @@ const genreDbReducer = (state = initialState, action) => {
         ...state,
         dataLoading: false,
         genreDetails: {},
+        error: ""
+      };
+    case GET_GENRE_BOOKS_PENDING:
+      return {
+        ...state,
+        dataLoading: action.dataLoading
+      };
+    case GET_GENRE_BOOKS_SUCCESS:
+      return {
+        ...state,
+        dataLoading: action.dataLoading,
+        genreBooks: action.payload
+      };
+    case GET_GENRE_BOOKS_FAILURE:
+      return {
+        ...state,
+        dataLoading: action.dataLoading,
+        error: action.payload
+      };
+    case GET_GENRE_BOOKS_RESET:
+      return {
+        ...state,
+        dataLoading: true, //changed
+        genreBooks: {},
         error: ""
       };
     default:

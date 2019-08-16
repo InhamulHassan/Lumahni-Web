@@ -14,7 +14,11 @@ import {
   EDIT_AUTHOR_PENDING,
   EDIT_AUTHOR_SUCCESS,
   EDIT_AUTHOR_FAILURE,
-  EDIT_AUTHOR_RESET
+  EDIT_AUTHOR_RESET,
+  GET_AUTHOR_BOOKS_PENDING,
+  GET_AUTHOR_BOOKS_SUCCESS,
+  GET_AUTHOR_BOOKS_FAILURE,
+  GET_AUTHOR_BOOKS_RESET
 } from "./types";
 
 import axios from "../../helpers/axios";
@@ -26,10 +30,10 @@ const getAuthorsPending = () => ({
   dataLoading: true
 });
 
-const getAuthorsSuccess = json => ({
+const getAuthorsSuccess = data => ({
   type: GET_ALL_AUTHORS_SUCCESS,
   dataLoading: false,
-  payload: json
+  payload: data
 });
 
 const getAuthorsFailure = error => ({
@@ -45,13 +49,13 @@ const getAuthorsReset = () => ({
 export const getAuthors = () => {
   return async dispatch => {
     try {
+      dispatch(getAuthorsPending()); // changed positon
       let response = await axios.get(URL);
-      dispatch(getAuthorsPending());
-      let data = await response.data;
-      dispatch(getAuthorsSuccess(data));
+      let result = response.data; // removed await
+      dispatch(getAuthorsSuccess(result.authors));
     } catch (error) {
       console.log(error);
-      dispatch(getAuthorsFailure(error));
+      dispatch(getAuthorsFailure(error.message));
     }
   };
 };
@@ -67,10 +71,10 @@ const getAuthorByIdPending = () => ({
   dataLoading: true
 });
 
-const getAuthorByIdSuccess = json => ({
+const getAuthorByIdSuccess = data => ({
   type: GET_AUTHOR_BY_ID_SUCCESS,
   dataLoading: false,
-  payload: json
+  payload: data
 });
 
 const getAuthorByIdFailure = error => ({
@@ -86,12 +90,12 @@ const getAuthorByIdReset = () => ({
 export const getAuthorById = id => {
   return async dispatch => {
     try {
+      dispatch(getAuthorByIdPending()); // changed position
       let response = await axios.get(`${URL}/${id}`);
-      dispatch(getAuthorByIdPending());
-      let json = await response.data;
-      dispatch(getAuthorByIdSuccess(json));
+      let result = response.data; // removed await
+      dispatch(getAuthorByIdSuccess(result.author));
     } catch (error) {
-      dispatch(getAuthorByIdFailure(error));
+      dispatch(getAuthorByIdFailure(error.message));
     }
   };
 };
@@ -126,6 +130,7 @@ const addAuthorReset = () => ({
 export const addAuthor = data => {
   return async dispatch => {
     try {
+      dispatch(addAuthorPending()); // changed position
       let response = await axios.post(`${URL}`, {
         grid: data.grid,
         name: data.authorName,
@@ -135,7 +140,6 @@ export const addAuthor = data => {
         img_s: data.imgThumbnailLink,
         genres: data.genreTags
       });
-      dispatch(addAuthorPending());
       const result = response.data;
       if (result.success) {
         dispatch(addAuthorSuccess(result.id));
@@ -143,7 +147,7 @@ export const addAuthor = data => {
         dispatch(addAuthorFailure("Failed"));
       }
     } catch (error) {
-      dispatch(addAuthorFailure(error));
+      dispatch(addAuthorFailure(error.message));
     }
   };
 };
@@ -178,6 +182,7 @@ const editAuthorReset = () => ({
 export const editAuthor = data => {
   return async dispatch => {
     try {
+      dispatch(editAuthorPending()); // changed position
       let response = await axios.put(`${URL}/${data.id}`, {
         grid: data.grid,
         name: data.authorName,
@@ -187,7 +192,6 @@ export const editAuthor = data => {
         img_s: data.imgThumbnailLink,
         genres: data.genreTags
       });
-      dispatch(editAuthorPending());
       const result = response.data;
       if (result.success) {
         dispatch(editAuthorSuccess(result.changesMade));
@@ -195,7 +199,7 @@ export const editAuthor = data => {
         dispatch(editAuthorFailure("Failed"));
       }
     } catch (error) {
-      dispatch(editAuthorFailure(error));
+      dispatch(editAuthorFailure(error.message));
     }
   };
 };
@@ -203,5 +207,46 @@ export const editAuthor = data => {
 export const resetEditAuthor = () => {
   return dispatch => {
     dispatch(editAuthorReset());
+  };
+};
+
+const getAuthorBooksPending = () => ({
+  type: GET_AUTHOR_BOOKS_PENDING,
+  dataLoading: true
+});
+
+const getAuthorBooksSuccess = data => ({
+  type: GET_AUTHOR_BOOKS_SUCCESS,
+  dataLoading: false,
+  payload: data
+});
+
+const getAuthorBooksFailure = error => ({
+  type: GET_AUTHOR_BOOKS_FAILURE,
+  dataLoading: false,
+  payload: error
+});
+
+const getAuthorBooksReset = () => ({
+  type: GET_AUTHOR_BOOKS_RESET
+});
+
+export const getAuthorBooks = id => {
+  return async dispatch => {
+    try {
+      dispatch(getAuthorBooksPending()); // changed position
+      let response = await axios.get(`${URL}/books/${id}`);
+      let data = response.data; // removed await
+      dispatch(getAuthorBooksSuccess(data.books));
+    } catch (error) {
+      console.log(error);
+      dispatch(getAuthorBooksFailure(error.message));
+    }
+  };
+};
+
+export const resetGetAuthorBooks = () => {
+  return dispatch => {
+    dispatch(getAuthorBooksReset());
   };
 };

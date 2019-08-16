@@ -249,7 +249,7 @@ class Book extends Component {
 
     if (bookGrError) {
       return (
-        <div className={classes.progressWrapper}>{bookGrError.message}</div>
+        <div className={classes.progressWrapper}>{bookGrError}</div>
       );
     }
 
@@ -285,7 +285,7 @@ class Book extends Component {
         {error || bookGrError ? (
           <div className={classes.errorWrapper}>
             <Typography variant="h4">
-              {error.message || bookGrError.message || ""}
+              {error || bookGrError || ""}
             </Typography>
           </div>
         ) : (

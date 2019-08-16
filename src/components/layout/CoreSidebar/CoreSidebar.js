@@ -114,7 +114,7 @@ class CoreSidebar extends Component {
             icon={<SettingsIcon />}
           />
           <ListItemLink
-            to="/login"
+            to="/logout"
             primaryAttribute="Logout"
             icon={<LogoutIcon />}
           />

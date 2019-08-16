@@ -25,6 +25,7 @@
     "slick-carousel": "^1.8.1",
     "styled-components": "^4.3.2",
     "underscore": "^1.9.1",
+    "unsplash-js": "^5.0.0",
     "validate.js": "^0.13.1"
   },
   "scripts": {

@@ -76,7 +76,7 @@ class Authors extends Component {
     }
 
     if (error) {
-      return <Typography variant="h6">{error.message}</Typography>;
+      return <Typography variant="h6">{error}</Typography>;
     }
 
     if (authors.length === 0) {

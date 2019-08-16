@@ -80,8 +80,6 @@ class Author extends Component {
 
     if (!authorDetails.genres) return null;
 
-    const length = Object.keys(authorDetails.genres).length;
-
     return (
       <div className={classes.genreContainer}>
         {authorDetails.genres.map((genre, index) => (
@@ -230,7 +228,7 @@ class Author extends Component {
 
     if (authorGrError) {
       return (
-        <div className={classes.progressWrapper}>{authorGrError.message}</div>
+        <div className={classes.progressWrapper}>{authorGrError}</div>
       );
     }
 
@@ -266,7 +264,7 @@ class Author extends Component {
         {error || authorGrError ? (
           <div className={classes.errorWrapper}>
             <Typography variant="h4">
-              {error.message || authorGrError.message || ""}
+              {error || authorGrError || ""}
             </Typography>
           </div>
         ) : (

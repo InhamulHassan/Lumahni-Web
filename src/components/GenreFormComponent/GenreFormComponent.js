@@ -130,8 +130,8 @@ class GenreFormComponent extends Component {
         <Typography className={classes.fieldError} variant="body2">
           <ErrorIcon className={classes.errorIcon} />
           {Object.keys(errors).length +
-            (Object.keys(errors).length <= 1 ? " error" : " errors") +
-            " has been found"}
+            (Object.keys(errors).length <= 1 ? " error has" : " errors have") +
+            " been found"}
         </Typography>
       )
     );

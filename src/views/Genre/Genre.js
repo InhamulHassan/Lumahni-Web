@@ -267,7 +267,7 @@ class Book extends Component {
         {error || bookGrError ? (
           <div className={classes.errorWrapper}>
             <Typography variant="h4">
-              {error.message || bookGrError.message || ""}
+              {error || bookGrError || ""}
             </Typography>
           </div>
         ) : (

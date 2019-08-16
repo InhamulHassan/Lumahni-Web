@@ -3,161 +3,91 @@
 export default theme => ({
   root: {
     backgroundColor: theme.palette.background.default,
-    height: "100vh"
+    height: "100vh",
+    minHeight: "300px"
   },
   grid: {
+    height: "100%",
+    minHeight: "100vh"
+  },
+  quoteRootContainer: {
+    position: "relative",
+    height: "100%",
+    overflow: "hidden",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  quoteImageContainer: {
+    position: "relative",
+    backgroundColor: theme.palette.common.neutral,
+    height: "100%",
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  quoteImageWrapper: {
+    width: "100%",
     height: "100%"
   },
+  image: {
+    height: "100%",
+    width: "100%",
+    objectFit: "cover"
+  },
+  gradientOverlay: {
+    position: "absolute",
+    height: "100%",
+    width: "100%",
+    opacity: "0.3",
+    backgroundColor: "#3d3d3d"
+  },
   quoteWrapper: {
-    [theme.breakpoints.down("md")]: {
+    position: "absolute",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+    flexBasis: "600px",
+    padding: "0 25px",
+    [theme.breakpoints.down("sm")]: {
       display: "none"
     }
   },
-  quote: {
-    backgroundColor: theme.palette.common.neutral,
-    height: "100%",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundImage: "url(/images/sign_up_1.jpg)",
-    backgroundSize: "cover",
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "center"
-  },
-  quoteInner: {
-    textAlign: "center",
-    flexBasis: "600px"
-  },
   quoteText: {
     color: theme.palette.common.white,
+    fontSize: "1.5vmax",
     fontWeight: 300
   },
-  name: {
+  quoteAuthor: {
     marginTop: theme.spacing(3),
+    fontSize: "0.8rem",
     color: theme.palette.common.white
   },
-  bio: {
-    color: theme.palette.common.white
+  quotePublication: {
+    marginTop: theme.spacing(1),
+    fontSize: "0.7rem",
+    fontStyle: "italic",
+    color: theme.palette.common.neutral
   },
-  contentWrapper: {},
-  content: {
+  contentContainer: {
     height: "100%",
     display: "flex",
-    flexDirection: "column"
-  },
-  contentHeader: {
-    display: "flex",
-    alignItems: "center",
-    paddingTop: theme.spacing(5),
-    paddingBototm: theme.spacing(2),
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2)
-  },
-  backButton: {},
-  logoImage: {
-    marginLeft: theme.spacing(4)
-  },
-  contentBody: {
-    flexGrow: 1,
-    display: "flex",
-    alignItems: "center",
-    [theme.breakpoints.down("md")]: {
-      justifyContent: "center"
-    }
-  },
-  form: {
-    paddingLeft: "100px",
-    paddingRight: "100px",
-    paddingBottom: "125px",
-    flexBasis: "700px",
+    flexDirection: "column",
     [theme.breakpoints.down("sm")]: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(2)
+      position: "absolute",
+      width: "100%",
+      backgroundColor: "transparent"
     }
   },
-  title: {
-    marginTop: theme.spacing(3)
-  },
-  subtitle: {
-    color: theme.palette.text.secondary,
-    marginTop: theme.spacing(0.5)
-  },
-  facebookButton: {
-    marginTop: theme.spacing(3),
-    width: "100%"
-  },
-  facebookIcon: {
-    marginRight: theme.spacing(1)
-  },
-  googleButton: {
-    marginTop: theme.spacing(2),
-    width: "100%"
-  },
-  googleIcon: {
-    marginRight: theme.spacing(1)
-  },
-  sugestion: {
-    color: theme.palette.text.secondary,
-    marginTop: theme.spacing(2),
-    textAlign: "center"
-  },
-  fields: {
-    marginTop: theme.spacing(2)
-  },
-  textField: {
-    width: "100%",
-    "& + & ": {
-      marginTop: theme.spacing(2)
-    }
-  },
-  policy: {
+  progressWrapper: {
+    paddingTop: "48px",
+    paddingBottom: "24px",
     display: "flex",
-    alignItems: "center"
+    justifyContent: "center"
   },
-  policyCheckbox: {
-    marginLeft: "-14px"
-  },
-  policyText: {
-    display: "inline",
-    color: theme.palette.text.secondary
-  },
-  policyUrl: {
-    color: theme.palette.text.primary,
-    "&:hover": {
-      cursor: "pointer",
-      color: theme.palette.primary.main
-    }
-  },
-  progress: {
-    display: "block",
-    marginTop: theme.spacing(2),
-    marginLeft: "auto",
-    marginRight: "auto"
-  },
-  signInButton: {
-    marginTop: theme.spacing(2),
-    width: "100%"
-  },
-  signUp: {
-    marginTop: theme.spacing(2),
-    color: theme.palette.text.secondary
-  },
-  signUpUrl: {
-    color: theme.palette.primary.main,
-    fontWeight: "bold",
-    "&:hover": {
-      color: theme.palette.primary.main
-    }
-  },
-  fieldError: {
-    color: theme.palette.danger.main,
-    marginBottom: theme.spacing(2),
-    marginTop: theme.spacing(1)
-  },
-  submitError: {
-    color: theme.palette.danger.main,
-    alignText: "center",
-    marginBottom: theme.spacing(1),
-    marginTop: theme.spacing(2)
+  circularProgress: {
+    color: "#ffffff"
   }
 });

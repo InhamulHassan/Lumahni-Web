@@ -14,10 +14,10 @@ const getAuthorByGrIdPending = () => ({
   dataLoading: true
 });
 
-const getAuthorByGrIdSuccess = json => ({
+const getAuthorByGrIdSuccess = data => ({
   type: GET_AUTHOR_BY_GRID_SUCCESS,
   dataLoading: false,
-  payload: json
+  payload: data
 });
 
 const getAuthorByGrIdFailure = error => ({
@@ -33,7 +33,7 @@ const getAuthorByGrIdReset = () => ({
 export const getAuthorByGrId = grid => {
   return async dispatch => {
     try {
-      console.log("getauthorbyGRID: " + grid);
+      dispatch(getAuthorByGrIdPending()); // changed positon
       let response = await axios({
         url: URL,
         method: "post",
@@ -56,12 +56,10 @@ export const getAuthorByGrId = grid => {
           `
         }
       });
-      dispatch(getAuthorByGrIdPending());
-      let json = await response.data;
-      dispatch(getAuthorByGrIdSuccess(json));
+      let result = response.data; //removed await
+      dispatch(getAuthorByGrIdSuccess(result));
     } catch (error) {
-      console.log("error: " + error);
-      dispatch(getAuthorByGrIdFailure(error));
+      dispatch(getAuthorByGrIdFailure(error.message));
     }
   };
 };

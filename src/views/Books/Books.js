@@ -113,7 +113,7 @@ class Books extends Component {
         {error ? (
           <div className={classes.errorWrapper}>
             <Typography variant="h4">
-              {error.message || ""}
+              {error || ""}
             </Typography>
           </div>
         ) : (

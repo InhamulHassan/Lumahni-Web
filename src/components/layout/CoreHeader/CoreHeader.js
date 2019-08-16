@@ -75,8 +75,7 @@ class CoreHeader extends Component {
   handleSignOut = () => {
     const { history } = this.props;
 
-    localStorage.setItem("isAuthenticated", false);
-    history.push("/login");
+    history.push("/logout");
   };
 
   handleShowNotifications = event => {
@@ -136,7 +135,7 @@ class CoreHeader extends Component {
                 </Badge>
               </IconButton>
             </Tooltip>
-            <Tooltip title="Sign Out" aria-label="Sign Out">
+            <Tooltip title="Logout" aria-label="Logout">
               <IconButton
                 className={classes.signOutButton}
                 onClick={this.handleSignOut}

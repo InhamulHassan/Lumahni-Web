@@ -10,13 +10,22 @@ import {
   ADD_AUTHOR_PENDING,
   ADD_AUTHOR_SUCCESS,
   ADD_AUTHOR_FAILURE,
-  ADD_AUTHOR_RESET
+  ADD_AUTHOR_RESET,
+  EDIT_AUTHOR_PENDING,
+  EDIT_AUTHOR_SUCCESS,
+  EDIT_AUTHOR_FAILURE,
+  EDIT_AUTHOR_RESET,
+  GET_AUTHOR_BOOKS_PENDING,
+  GET_AUTHOR_BOOKS_SUCCESS,
+  GET_AUTHOR_BOOKS_FAILURE,
+  GET_AUTHOR_BOOKS_RESET
 } from "../actions/types";
 
 const initialState = {
   dataLoading: true,
   data: [],
   authorDetails: {},
+  authorBooks: {},
   authorId: null,
   error: ""
 };
@@ -93,6 +102,30 @@ const authorDbReducer = (state = initialState, action) => {
         ...state,
         dataLoading: false,
         authorId: null,
+        error: ""
+      };
+    case GET_AUTHOR_BOOKS_PENDING:
+      return {
+        ...state,
+        dataLoading: action.dataLoading
+      };
+    case GET_AUTHOR_BOOKS_SUCCESS:
+      return {
+        ...state,
+        dataLoading: action.dataLoading,
+        authorBooks: action.payload
+      };
+    case GET_AUTHOR_BOOKS_FAILURE:
+      return {
+        ...state,
+        dataLoading: action.dataLoading,
+        error: action.payload
+      };
+    case GET_AUTHOR_BOOKS_RESET:
+      return {
+        ...state,
+        dataLoading: true, //changed
+        authorBooks: {},
         error: ""
       };
     default:
