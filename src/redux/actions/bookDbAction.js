@@ -3,6 +3,10 @@ import {
   GET_ALL_BOOKS_SUCCESS,
   GET_ALL_BOOKS_FAILURE,
   GET_ALL_BOOKS_RESET,
+  GET_BOOKS_BY_PAGE_PENDING,
+  GET_BOOKS_BY_PAGE_SUCCESS,
+  GET_BOOKS_BY_PAGE_FAILURE,
+  GET_BOOKS_BY_PAGE_RESET,
   GET_BOOK_BY_ID_PENDING,
   GET_BOOK_BY_ID_SUCCESS,
   GET_BOOK_BY_ID_FAILURE,
@@ -61,6 +65,48 @@ export const resetGetBooks = () => {
     dispatch(getBooksReset());
   };
 };
+
+const getBooksByPagePending = () => ({
+  type: GET_BOOKS_BY_PAGE_PENDING,
+  dataLoading: true
+});
+
+const getBooksByPageSuccess = data => ({
+  type: GET_BOOKS_BY_PAGE_SUCCESS,
+  dataLoading: false,
+  payload: data
+});
+
+const getBooksByPageFailure = error => ({
+  type: GET_BOOKS_BY_PAGE_FAILURE,
+  dataLoading: false,
+  payload: error
+});
+
+const getBooksByPageReset = () => ({
+  type: GET_BOOKS_BY_PAGE_RESET
+});
+
+export const getBooksByPage = (page, limit) => {
+  return async dispatch => {
+    try {
+      dispatch(getBooksByPagePending()); //changed position
+      let response = await axios.get(`${URL}/page/${page}?limit=${limit}`);
+      let result = response.data;
+      dispatch(getBooksByPageSuccess(result));
+    } catch (error) {
+      console.log(error);
+      dispatch(getBooksByPageFailure(error.message));
+    }
+  };
+};
+
+export const resetGetBooksByPage = () => {
+  return dispatch => {
+    dispatch(getBooksByPageReset());
+  };
+};
+
 
 const getBookByIdPending = () => ({
   type: GET_BOOK_BY_ID_PENDING,
@@ -194,7 +240,7 @@ export const editBook = data => {
       });
       const result = response.data;
       if (result.success) {
-        dispatch(editBookSuccess(result.changesMade));
+        dispatch(editBookSuccess(result));
       } else {
         dispatch(editBookFailure("Failed"));
       }

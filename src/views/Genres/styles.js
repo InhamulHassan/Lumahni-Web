@@ -23,16 +23,38 @@ export default theme => ({
     marginTop: theme.spacing(5),
     display: "flex",
     flexDirection: "row",
-    alignItems: "start"
+    alignItems: "flex-start",
+    [theme.breakpoints.down("sm")]: {
+      flexDirection: "column"
+    }
   },
   genreDetailsContainer: {
     flex: 3,
     margin: "5px 25px 5px 0",
-    maxWidth: "350px"
+    maxWidth: "350px",
+    [theme.breakpoints.down("sm")]: {
+      flex: 1,
+      maxWidth: "100%",
+      margin: "15px 0"
+    }
+  },
+  // creates a scrollWrapper when table too big for screen
+  bookTableScrollWrapper: {
+    flex: 4,
+    [theme.breakpoints.down("sm")]: {
+      display: "flex",
+      position: "relative",
+      width: "100%",
+      height: "auto",
+      overflow: "scroll"
+    }
   },
   bookTableContainer: {
-    flex: 4,
-    margin: "5px 0 5px 25px"
+    margin: "5px 0 5px 25px",
+    [theme.breakpoints.down("sm")]: {
+      flex: 1,
+      margin: "15px 0"
+    }
   },
   rootGenreDetails: {
     position: "relative",
@@ -93,7 +115,12 @@ export default theme => ({
     "& .read-more-button": {
       cursor: "pointer",
       display: "inline-block",
+      marginLeft: theme.spacing(1),
       color: theme.palette.primary.main
+    },
+    "& .read-more-button:hover": {
+      color: theme.palette.primary.dark,
+      textDecoration: "underline"
     }
   },
   genreDescription: {

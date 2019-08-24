@@ -182,6 +182,7 @@ const editAuthorReset = () => ({
 export const editAuthor = data => {
   return async dispatch => {
     try {
+      // dispatch pending causes for dialog closure - FIXED!
       dispatch(editAuthorPending()); // changed position
       let response = await axios.put(`${URL}/${data.id}`, {
         grid: data.grid,
@@ -194,9 +195,9 @@ export const editAuthor = data => {
       });
       const result = response.data;
       if (result.success) {
-        dispatch(editAuthorSuccess(result.changesMade));
+        dispatch(editAuthorSuccess(result));
       } else {
-        dispatch(editAuthorFailure("Failed"));
+        dispatch(editAuthorFailure("Author Edit Failed"));
       }
     } catch (error) {
       dispatch(editAuthorFailure(error.message));

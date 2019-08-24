@@ -1,8 +1,8 @@
 import {
-  FETCH_UNSPLASH_PHOTO_PENDING,
-  FETCH_UNSPLASH_PHOTO_SUCCESS,
-  FETCH_UNSPLASH_PHOTO_FAILURE,
-  FETCH_UNSPLASH_PHOTO_RESET
+  GET_UNSPLASH_PHOTO_PENDING,
+  GET_UNSPLASH_PHOTO_SUCCESS,
+  GET_UNSPLASH_PHOTO_FAILURE,
+  GET_UNSPLASH_PHOTO_RESET
 } from "./types";
 
 import axios from "../../helpers/axios";
@@ -10,24 +10,24 @@ import axios from "../../helpers/axios";
 const URL = "/unsplash";
 
 const fetchUnsplashPhotoPending = () => ({
-  type: FETCH_UNSPLASH_PHOTO_PENDING,
+  type: GET_UNSPLASH_PHOTO_PENDING,
   dataLoading: true
 });
 
 const fetchUnsplashPhotoSuccess = data => ({
-  type: FETCH_UNSPLASH_PHOTO_SUCCESS,
+  type: GET_UNSPLASH_PHOTO_SUCCESS,
   dataLoading: false,
   payload: data
 });
 
 const fetchUnsplashPhotoFailure = error => ({
-  type: FETCH_UNSPLASH_PHOTO_FAILURE,
+  type: GET_UNSPLASH_PHOTO_FAILURE,
   dataLoading: false,
   payload: error
 });
 
 const fetchUnsplashPhotoReset = () => ({
-  type: FETCH_UNSPLASH_PHOTO_RESET
+  type: GET_UNSPLASH_PHOTO_RESET
 });
 
 export const fetchUnsplashPhoto = () => {

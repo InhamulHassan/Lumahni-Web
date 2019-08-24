@@ -98,19 +98,20 @@ class BookFormComponent extends Component {
     this.populateForm();
   }
 
-  // componentDidUpdate() {
-  //   if (!!this.props.id) {
-  //     this.props.handleClose();
-  //   }
-  // }
-
+  componentDidUpdate(prevProps, prevState) {
+    // TODO: do this by comparing prevprops and this props
+    if (prevProps.editSuccess !== this.props.editSuccess) {
+      this.props.handleClose();
+    }
+  }
   componentWillUnmount() {
+    // get the id/grid before reset
+    const { id, grid } = this.props.editedDetails;
     this.props.resetGetBookByGrId();
-    this.props.resetEditBook();
     this.props.resetGetAuthors();
     this.props.resetGetGenres();
+    this.props.resetEditBook();
     // to refresh the book data for the Book View
-    const { id, grid } = this.props.bookData;
     this.props.getBookById(id);
     this.props.getBookByGrId(grid);
   }
@@ -126,13 +127,11 @@ class BookFormComponent extends Component {
     this.setState(newState);
 
     if (!errors && validIsbn) {
-      // this.props.editBook(data).then(this.props.handleClose());
       this.props.editBook(data);
     }
   };
 
   onSubmit = event => {
-    event.preventDefault();
     const {
       id,
       bookTitle,
@@ -146,10 +145,13 @@ class BookFormComponent extends Component {
       authorTags
     } = this.state;
 
+    // cleaning the text from stray HTML tags
+    var cleanedDescription = htmlCleaner(description);
+
     const formData = {
       id,
       bookTitle,
-      description,
+      description: cleanedDescription,
       isbn,
       isbn13,
       grid,
@@ -215,12 +217,12 @@ class BookFormComponent extends Component {
       img_thumbnail,
       genres,
       authors
-    } = this.props.bookData;
+    } = this.props.bookPropsData;
 
     let genreTags = genres || [];
     let authorTags = authors || [];
 
-    if (Object.keys(this.props.bookData).length > 0) {
+    if (Object.keys(this.props.bookPropsData).length > 0) {
       this.setState({
         id: id,
         bookTitle: title,
@@ -245,7 +247,7 @@ class BookFormComponent extends Component {
 
   handleGenreTagAddition = tag => {
     const genreTagArray = this.state.genreTags;
-    if (!genreTagArray.includes(tag)) {
+    if (!genreTagArray.find(item => item.id === tag.id))  {
       const genreTags = [].concat(genreTagArray, tag);
       this.setState({ genreTags });
     }
@@ -282,7 +284,7 @@ class BookFormComponent extends Component {
 
   handleAuthorTagAddition = tag => {
     const authorTagArray = this.state.authorTags;
-    if (!authorTagArray.includes(tag)) {
+    if (!authorTagArray.find(item => item.id === tag.id))  {
       const authorTags = [].concat(authorTagArray, tag);
       this.setState({ authorTags });
     }
@@ -310,6 +312,37 @@ class BookFormComponent extends Component {
     }
   };
 
+  renderBookQuickView = () => {
+    const { classes, bookGrDetails, bookGrLoading, bookGrError } = this.props;
+
+    if (bookGrLoading) {
+      return (
+        <div className={classes.quickViewProgressWrapper}>
+          <CircularProgress size={40} />
+        </div>
+      );
+    }
+
+    // the statement after && is risky better find an alternative (to not show error when similar_books is null)
+    if (bookGrError && !Object.keys(bookGrDetails).length > 0) {
+      return <div className={classes.errorWrapper}>{bookGrError}</div>;
+    }
+
+    // the statement after && is risky better find an alternative (to not show error when similar_books is null)
+    if (bookGrError && bookGrDetails.book == null) {
+      return <div className={classes.errorWrapper}>{bookGrError}</div>;
+    }
+
+    if (Object.keys(bookGrDetails).length > 0) {
+      return (
+        <BookQuickView
+          bookGRData={bookGrDetails.book}
+          populateFields={this.populateGrFields}
+        />
+      );
+    }
+  };
+
   getSubmitErrorMessage = () => {
     const { isValid, errors } = this.state;
     const { classes } = this.props;
@@ -326,18 +359,28 @@ class BookFormComponent extends Component {
     );
   };
 
+  getErrorMessage = () => {
+    const { classes, error, bookGrError } = this.props;
+
+    if (error || bookGrError) {
+      return (
+        <Typography className={classes.fieldError} variant="body2">
+          <ErrorIcon className={classes.errorIcon} />
+          {error || bookGrError}
+        </Typography>
+      );
+    }
+  };
+
   render() {
     const {
       classes,
       className,
-      bookData,
-      bookDetails,
       loading,
-      error,
       bookGrDetails,
-      bookGrLoading,
-      bookGrError
+      bookGrLoading
     } = this.props;
+
     const {
       errors,
       genreTags,
@@ -345,6 +388,7 @@ class BookFormComponent extends Component {
       authorTags,
       authorSuggesions
     } = this.state;
+
     const rootClassName = classNames(classes.root, className);
 
     return (
@@ -356,12 +400,17 @@ class BookFormComponent extends Component {
           />
         </MainViewHeader>
         <MainViewContent noPadding>
-          <form className={classes.form} onSubmit={this.onSubmit}>
+          <form className={classes.form}>
+            {loading && (
+              <div className={classes.progressContainer}>
+                <CircularProgress size={100} />
+              </div>
+            )}
             <div className={classes.group}>
               <Typography className={classes.groupLabel} variant="h6">
                 Book Information
               </Typography>
-              <div className={classes.field}>
+              <div className={classes.textFieldWrapper}>
                 <TextField
                   className={classes.textFieldFull}
                   name="bookTitle"
@@ -380,7 +429,7 @@ class BookFormComponent extends Component {
                   {errors.bookTitle[0]}
                 </Typography>
               )}
-              <div className={classes.field}>
+              <div className={classes.textFieldWrapper}>
                 <TextField
                   className={classes.textFieldFull}
                   name="description"
@@ -402,65 +451,25 @@ class BookFormComponent extends Component {
                 </Typography>
               )}
             </div>
-            <div className={classes.group}>
+            <div className={classes.generalGroup}>
               <Typography className={classes.groupLabel} variant="h6">
                 General Details
               </Typography>
-              <div className={classes.groupField}>
-                <TextField
-                  className={classes.textField}
-                  name="isbn"
-                  label="ISBN"
-                  helperText="Please specify the 10-digit ISBN number of the book"
-                  type="text"
-                  required
-                  inputProps={{ maxLength: 10 }}
-                  onInput={this.validateISBNInput}
-                  value={this.state.isbn}
-                  variant="outlined"
-                  onChange={this.handleChange}
-                />
-                <TextField
-                  className={classes.textField}
-                  name="isbn13"
-                  label="ISBN13"
-                  helperText="Please specify the 13-digit ISBN13 number of the book"
-                  type="text"
-                  inputProps={{ maxLength: 13 }}
-                  onInput={this.validateISBNInput}
-                  value={this.state.isbn13}
-                  variant="outlined"
-                  onChange={this.handleChange}
-                />
-                <TextField
-                  className={classes.textField}
-                  name="grid"
-                  label="Goodreads Book ID"
-                  helperText="Please specify the Goodreads ID of the book"
-                  type="text"
-                  value={this.state.grid}
-                  variant="outlined"
-                  onChange={this.handleChange}
-                  onInput={e => {
-                    e.target.value = e.target.value.replace(/[^0-9]/g, "");
-                  }}
-                  InputProps={{
-                    endAdornment: !!this.state.grid ? (
-                      <InputAdornment position="end">
-                        <IconButton tabIndex="-1" onClick={this.searchByGrid}>
-                          {bookGrLoading ? (
-                            <CircularProgress size="2" />
-                          ) : (
-                            <SearchIcon />
-                          )}
-                        </IconButton>
-                      </InputAdornment>
-                    ) : null
-                  }}
-                />
-              </div>
-              <div className={classes.groupField}>
-                <div className={classes.errorFieldContainer}>
+              <div className={classes.generalGroupField}>
+                <div className={classes.textFieldWrapper}>
+                  <TextField
+                    className={classes.textField}
+                    name="isbn"
+                    label="ISBN"
+                    helperText="Please specify the 10-digit ISBN number of the book"
+                    type="text"
+                    required
+                    inputProps={{ maxLength: 10 }}
+                    onInput={this.validateISBNInput}
+                    value={this.state.isbn}
+                    variant="outlined"
+                    onChange={this.handleChange}
+                  />
                   {errors.isbn && (
                     <Typography className={classes.fieldError} variant="body2">
                       <ErrorIcon className={classes.errorIcon} />
@@ -468,7 +477,19 @@ class BookFormComponent extends Component {
                     </Typography>
                   )}
                 </div>
-                <div className={classes.errorFieldContainer}>
+                <div className={classes.textFieldWrapper}>
+                  <TextField
+                    className={classes.textField}
+                    name="isbn13"
+                    label="ISBN13"
+                    helperText="Please specify the 13-digit ISBN13 number of the book"
+                    type="text"
+                    inputProps={{ maxLength: 13 }}
+                    onInput={this.validateISBNInput}
+                    value={this.state.isbn13}
+                    variant="outlined"
+                    onChange={this.handleChange}
+                  />
                   {errors.isbn13 && (
                     <Typography className={classes.fieldError} variant="body2">
                       <ErrorIcon className={classes.errorIcon} />
@@ -476,7 +497,39 @@ class BookFormComponent extends Component {
                     </Typography>
                   )}
                 </div>
-                <div className={classes.errorFieldContainer}>
+                <div className={classes.textFieldWrapper}>
+                  <TextField
+                    className={classes.textField}
+                    name="grid"
+                    label="Goodreads Book ID"
+                    helperText="Please specify the Goodreads ID of the book"
+                    type="text"
+                    value={this.state.grid}
+                    variant="outlined"
+                    onChange={this.handleChange}
+                    onInput={e => {
+                      e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                    }}
+                    InputProps={{
+                      endAdornment: !!this.state.grid ? (
+                        <InputAdornment
+                          position="end"
+                          className={classes.searchInputAdornment}
+                        >
+                          {bookGrLoading ? (
+                            <CircularProgress size={20} />
+                          ) : (
+                            <IconButton
+                              tabIndex="-1"
+                              onClick={this.searchByGrid}
+                            >
+                              <SearchIcon />
+                            </IconButton>
+                          )}
+                        </InputAdornment>
+                      ) : null
+                    }}
+                  />
                   {errors.grid && (
                     <Typography className={classes.fieldError} variant="body2">
                       <ErrorIcon className={classes.errorIcon} />
@@ -485,23 +538,15 @@ class BookFormComponent extends Component {
                   )}
                 </div>
               </div>
-              <div className={classes.groupField}>
-                {Object.keys(bookGrDetails).length > 0 &&
-                  (!!bookGrLoading ? (
-                    <CircularProgress size="2" />
-                  ) : (
-                    <BookQuickView
-                      bookGRData={bookGrDetails.book}
-                      populateFields={this.populateGrFields}
-                    />
-                  ))}
+              <div className={classes.bookQuickViewWrapper}>
+                {this.renderBookQuickView()}
               </div>
             </div>
             <div className={classes.group}>
               <Typography className={classes.groupLabel} variant="h6">
                 Image Links
               </Typography>
-              <div className={classes.field}>
+              <div className={classes.textFieldWrapper}>
                 <TextField
                   className={classes.textFieldFull}
                   name="imgLink"
@@ -519,7 +564,7 @@ class BookFormComponent extends Component {
                   {errors.imgLink[0]}
                 </Typography>
               )}
-              <div className={classes.field}>
+              <div className={classes.textFieldWrapper}>
                 <TextField
                   className={classes.textFieldFull}
                   name="imgThumbnailLink"
@@ -542,7 +587,7 @@ class BookFormComponent extends Component {
               <Typography className={classes.groupLabel} variant="h6">
                 Book Genres
               </Typography>
-              <div className={classes.field}>
+              <div className={classes.textFieldWrapper}>
                 <SuggestionsTagChip
                   tags={genreTags}
                   suggesions={genreSuggesions}
@@ -555,7 +600,7 @@ class BookFormComponent extends Component {
               <Typography className={classes.groupLabel} variant="h6">
                 Book Authors
               </Typography>
-              <div className={classes.field}>
+              <div className={classes.textFieldWrapper}>
                 <SuggestionsTagChip
                   tags={authorTags}
                   suggesions={authorSuggesions}
@@ -570,15 +615,10 @@ class BookFormComponent extends Component {
         </MainViewContent>
         <MainViewFooter className={classes.mainViewFooter}>
           {this.getSubmitErrorMessage()}
-          {loading ? (
-            <div className={classes.progressWrapper}>
-              <CircularProgress />
-            </div>
-          ) : (
-            <Button color="primary" variant="contained" onClick={this.onSubmit}>
-              Save Changes
-            </Button>
-          )}
+          {this.getErrorMessage()}
+          <Button color="primary" variant="contained" onClick={this.onSubmit}>
+            Save Changes
+          </Button>
         </MainViewFooter>
       </MainView>
     );
@@ -589,17 +629,12 @@ BookFormComponent.propTypes = {
   className: PropTypes.string,
   classes: PropTypes.object.isRequired,
   open: PropTypes.bool.isRequired,
-  bookData: PropTypes.object.isRequired,
-  handleClose: PropTypes.func.isRequired,
-  authors: PropTypes.array.isRequired,
-  genres: PropTypes.array.isRequired,
-  bookDetails: PropTypes.object.isRequired,
-  bookGrDetails: PropTypes.object.isRequired
+  bookPropsData: PropTypes.object.isRequired,
+  handleClose: PropTypes.func.isRequired
 };
 
 BookFormComponent.defaultProps = {
   open: false,
-  handleClose: () => {},
   bookData: {},
   authors: [],
   authorLoading: false,
@@ -610,7 +645,8 @@ BookFormComponent.defaultProps = {
   bookGrDetails: {},
   bookGrLoading: false,
   bookGrError: null,
-  bookDetails: {},
+  editSuccess: false,
+  editedDetails: {},
   loading: false,
   error: null
 };
@@ -623,11 +659,12 @@ const mapStateToProps = state => {
     genres: state.genre.data,
     genreLoading: state.genre.dataLoading,
     genreError: state.genre.error,
-    bookGrDetails: state.book_gr.bookDetails.data,
+    bookGrDetails: state.book_gr.bookDetails,
     bookGrLoading: state.book_gr.dataLoading,
     bookGrError: state.book_gr.error,
-    bookDetails: state.book.bookDetails,
-    loading: state.book.dataLoading,
+    editSuccess: state.book.editSuccess,
+    editedDetails: state.book.bookDetails,
+    loading: state.book.editLoading,
     error: state.book.error
   };
 };

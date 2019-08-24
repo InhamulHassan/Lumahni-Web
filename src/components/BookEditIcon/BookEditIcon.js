@@ -66,7 +66,7 @@ class BookEditIcon extends Component {
             <BookEditFormComponent
               handleClose={this.handleDialogClose}
               open={open}
-              bookData={bookData}
+              bookPropsData={bookData}
             />
           </FormDialog>
         </Dialog>

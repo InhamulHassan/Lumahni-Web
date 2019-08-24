@@ -89,6 +89,10 @@ export default theme => ({
       display: "inline-block",
       marginLeft: theme.spacing(1),
       color: theme.palette.primary.main
+    },
+    "& .read-more-button:hover": {
+      color: theme.palette.primary.dark,
+      textDecoration: "underline"
     }
   },
   detailsContainer: {

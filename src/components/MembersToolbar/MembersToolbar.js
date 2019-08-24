@@ -23,7 +23,15 @@ import styles from "./styles";
 
 class MembersToolbar extends Component {
   render() {
-    const { classes, className, selectedUsers } = this.props;
+    const {
+      classes,
+      className,
+      selectedMembers,
+      handleSearch,
+      selectedColumn,
+      onSelectChange,
+      menuItems
+    } = this.props;
 
     const rootClassName = classNames(classes.root, className);
 
@@ -31,7 +39,7 @@ class MembersToolbar extends Component {
       <div className={rootClassName}>
         <div className={classes.row}>
           <span className={classes.spacer} />
-          {selectedUsers.length > 0 && (
+          {selectedMembers.length > 0 && (
             <IconButton
               className={classes.deleteButton}
               onClick={this.handleDeleteUsers}
@@ -63,6 +71,10 @@ class MembersToolbar extends Component {
           <SearchInput
             className={classes.searchInput}
             placeholder="Search members"
+            onChange={handleSearch}
+            selectedValue={selectedColumn}
+            onSelectChange={onSelectChange}
+            menuItems={menuItems}
           />
           <span className={classes.spacer} />
           <DisplayModeView mode="list" />
@@ -75,11 +87,15 @@ class MembersToolbar extends Component {
 MembersToolbar.propTypes = {
   className: PropTypes.string,
   classes: PropTypes.object.isRequired,
-  selectedUsers: PropTypes.array
+  selectedMembers: PropTypes.array,
+  handleSearch: PropTypes.func.isRequired,
+  selectedColumn: PropTypes.string,
+  onSelectChange: PropTypes.func,
+  menuItems: PropTypes.array
 };
 
 MembersToolbar.defaultProps = {
-  selectedUsers: []
+  selectedMembers: []
 };
 
 export default withStyles(styles)(MembersToolbar);

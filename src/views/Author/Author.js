@@ -13,6 +13,7 @@ import { withStyles } from "@material-ui/core";
 
 // Material components
 import {
+  Avatar,
   CircularProgress,
   IconButton,
   Tooltip,
@@ -227,9 +228,7 @@ class Author extends Component {
     };
 
     if (authorGrError) {
-      return (
-        <div className={classes.progressWrapper}>{authorGrError}</div>
-      );
+      return <div className={classes.progressWrapper}>{authorGrError}</div>;
     }
 
     if (books.length !== 0) {
@@ -263,9 +262,7 @@ class Author extends Component {
       <CoreLayout title={authorDetails.name}>
         {error || authorGrError ? (
           <div className={classes.errorWrapper}>
-            <Typography variant="h4">
-              {error || authorGrError || ""}
-            </Typography>
+            <Typography variant="h4">{error || authorGrError || ""}</Typography>
           </div>
         ) : (
           <div className={classes.root}>
@@ -287,13 +284,11 @@ class Author extends Component {
                 <div>
                   <MainView className={rootClassName}>
                     <MainViewContent noPadding>
-                      <div className={classes.imageWrapper}>
-                        <img
-                          alt={authorDetails.name}
-                          className={classes.image}
-                          src={authorDetails.img_l}
-                        />
-                      </div>
+                      <Avatar
+                        alt={authorDetails.name}
+                        src={authorDetails.img_m}
+                        className={classes.authorAvatar}
+                      />
                       <div className={classes.editIconContainer}>
                         <AuthorEditIcon authorData={authorDetails} />
                       </div>
@@ -360,7 +355,7 @@ const mapStateToProps = state => {
     authorDetails: state.author.authorDetails,
     loading: state.author.dataLoading,
     error: state.author.error,
-    authorGrDetails: state.author_gr.authorDetails.data,
+    authorGrDetails: state.author_gr.authorDetails,
     authorGrLoading: state.author_gr.dataLoading,
     authorGrError: state.author_gr.error
   };

@@ -58,8 +58,19 @@ export default theme => ({
     justifyContent: "center",
     width: "100%"
   },
+  buttonWrapper: {
+   margin: theme.spacing(1),
+   marginTop: theme.spacing(2),
+   position: 'relative',
+ },
+ buttonProgress: {
+   color: "#ffffff",
+   position: 'absolute',
+   top: '0',
+   left: '0',
+   margin: "10px 40px"
+ },
   signInButton: {
-    marginTop: theme.spacing(2),
     height: 40,
     width: 100,
     background: "linear-gradient(-45deg, #0767DB, #07d3da)",

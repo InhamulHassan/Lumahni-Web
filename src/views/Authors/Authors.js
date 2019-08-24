@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 
 // Redux Helpers
 import { connect } from "react-redux";
@@ -8,7 +7,12 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
 // Material components, helpers
-import { CircularProgress, Typography, withStyles } from "@material-ui/core";
+import {
+  CircularProgress,
+  TablePagination,
+  Typography,
+  withStyles
+} from "@material-ui/core";
 
 // Shared layouts
 import { CoreLayout } from "../../layout/CoreLayout";
@@ -31,11 +35,9 @@ class Authors extends Component {
     this.signal = true;
 
     this.state = {
-      isLoading: false,
-      limit: 10,
-      authors: [],
+      page: 0,
+      rowsPerPage: 10,
       selectedAuthors: [],
-      error: null,
       searchQuery: "",
       selectedColumn: ""
     };
@@ -63,9 +65,17 @@ class Authors extends Component {
     this.setState({ selectedColumn: event.target.value });
   };
 
+  handleChangePage = (event, page) => {
+    this.setState({ page });
+  };
+
+  handleChangeRowsPerPage = event => {
+    this.setState({ rowsPerPage: event.target.value });
+  };
+
   renderAuthors() {
     const { classes, authors, loading, error } = this.props;
-    const { searchQuery, selectedColumn } = this.state;
+    const { page, rowsPerPage, searchQuery, selectedColumn } = this.state;
 
     if (loading) {
       return (
@@ -87,6 +97,8 @@ class Authors extends Component {
       <AuthorsTableList
         onSelect={this.handleSelect}
         authors={authors}
+        page={page}
+        rowsPerPage={rowsPerPage}
         filterQuery={searchQuery}
         selectedColumn={selectedColumn}
       />
@@ -94,14 +106,14 @@ class Authors extends Component {
   }
 
   render() {
-    const { error, classes } = this.props;
-    const { selectedAuthors, selectedColumn } = this.state;
+    const { authors, error, classes } = this.props;
+    const { page, rowsPerPage, selectedAuthors, selectedColumn } = this.state;
 
     return (
       <CoreLayout title="Authors">
         {error ? (
           <div className={classes.errorWrapper}>
-            <Typography variant="h4">{error.message || ""}</Typography>
+            <Typography variant="h4">{error || ""}</Typography>
           </div>
         ) : (
           <div className={classes.root}>
@@ -117,25 +129,28 @@ class Authors extends Component {
               ]}
             />
             <div className={classes.content}>{this.renderAuthors()}</div>
+            <TablePagination
+              className={classes.tablePagination}
+              backIconButtonProps={{
+                "aria-label": "Previous Page"
+              }}
+              component="div"
+              count={authors.length}
+              nextIconButtonProps={{
+                "aria-label": "Next Page"
+              }}
+              onChangePage={this.handleChangePage}
+              onChangeRowsPerPage={this.handleChangeRowsPerPage}
+              page={page}
+              rowsPerPage={rowsPerPage}
+              rowsPerPageOptions={[5, 10, 25]}
+            />
           </div>
         )}
       </CoreLayout>
     );
   }
 }
-
-const mapStateToProps = state => {
-  return {
-    authors: state.author.data,
-    loading: state.author.dataLoading,
-    error: state.author.error
-  };
-};
-
-const mapDispatchToProps = {
-  getAuthors,
-  resetGetAuthors
-};
 
 Authors.defaultProps = {
   authors: [],
@@ -148,6 +163,19 @@ Authors.propTypes = {
   authors: PropTypes.array.isRequired,
   loading: PropTypes.bool.isRequired,
   error: PropTypes.string.isRequired
+};
+
+const mapStateToProps = state => {
+  return {
+    authors: state.author.data,
+    loading: state.author.dataLoading,
+    error: state.author.error
+  };
+};
+
+const mapDispatchToProps = {
+  getAuthors,
+  resetGetAuthors
 };
 
 export default connect(

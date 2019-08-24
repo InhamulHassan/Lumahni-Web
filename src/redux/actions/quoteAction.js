@@ -1,12 +1,12 @@
 import {
-  FETCH_QUOTE_PENDING,
-  FETCH_QUOTE_SUCCESS,
-  FETCH_QUOTE_FAILURE,
-  FETCH_QUOTE_RESET,
-  FETCH_QUOTE_BY_TAG_PENDING,
-  FETCH_QUOTE_BY_TAG_SUCCESS,
-  FETCH_QUOTE_BY_TAG_FAILURE,
-  FETCH_QUOTE_BY_TAG_RESET
+  GET_QUOTE_PENDING,
+  GET_QUOTE_SUCCESS,
+  GET_QUOTE_FAILURE,
+  GET_QUOTE_RESET,
+  GET_QUOTE_BY_TAG_PENDING,
+  GET_QUOTE_BY_TAG_SUCCESS,
+  GET_QUOTE_BY_TAG_FAILURE,
+  GET_QUOTE_BY_TAG_RESET
 } from "./types";
 
 import axios from "../../helpers/axios";
@@ -14,24 +14,24 @@ import axios from "../../helpers/axios";
 const URL = "/quote";
 
 const fetchQuotePending = () => ({
-  type: FETCH_QUOTE_PENDING,
+  type: GET_QUOTE_PENDING,
   dataLoading: true
 });
 
 const fetchQuoteSuccess = data => ({
-  type: FETCH_QUOTE_SUCCESS,
+  type: GET_QUOTE_SUCCESS,
   dataLoading: false,
   payload: data
 });
 
 const fetchQuoteFailure = error => ({
-  type: FETCH_QUOTE_FAILURE,
+  type: GET_QUOTE_FAILURE,
   dataLoading: false,
   payload: error
 });
 
 const fetchQuoteReset = () => ({
-  type: FETCH_QUOTE_RESET
+  type: GET_QUOTE_RESET
 });
 
 export const fetchQuote = () => {
@@ -54,24 +54,24 @@ export const resetFetchQuote = () => {
 };
 
 const fetchQuoteByTagPending = () => ({
-  type: FETCH_QUOTE_BY_TAG_PENDING,
+  type: GET_QUOTE_BY_TAG_PENDING,
   dataLoading: true
 });
 
 const fetchQuoteByTagSuccess = data => ({
-  type: FETCH_QUOTE_BY_TAG_SUCCESS,
+  type: GET_QUOTE_BY_TAG_SUCCESS,
   dataLoading: false,
   payload: data
 });
 
 const fetchQuoteByTagFailure = error => ({
-  type: FETCH_QUOTE_BY_TAG_FAILURE,
+  type: GET_QUOTE_BY_TAG_FAILURE,
   dataLoading: false,
   payload: error
 });
 
 const fetchQuoteByTagReset = () => ({
-  type: FETCH_QUOTE_BY_TAG_RESET
+  type: GET_QUOTE_BY_TAG_RESET
 });
 
 export const fetchQuoteByTag = tag => {

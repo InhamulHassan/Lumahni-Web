@@ -21,12 +21,12 @@ import styles from "./styles";
 
 class UserProfileCard extends Component {
   render() {
-    const { classes, className, ...rest } = this.props;
+    const { classes, className } = this.props;
 
     const rootClassName = classNames(classes.root, className);
 
     return (
-      <MainView {...rest} className={rootClassName}>
+      <MainView className={rootClassName}>
         <MainViewContent>
           <div className={classes.details}>
             <div className={classes.info}>

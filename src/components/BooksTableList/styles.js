@@ -44,5 +44,15 @@ export default theme => ({
     display: "inline-block",
     marginRight: theme.spacing(0.5),
     color: theme.palette.text.secondary
+  },
+  genreContainer: {
+    whiteSpace: "nowrap",
+    textOverflow: "ellipsis",
+    overflow: "hidden"
+  },
+  genreName: {
+    display: "inline-block",
+    marginRight: theme.spacing(0.5),
+    color: theme.palette.text.secondary
   }
 });

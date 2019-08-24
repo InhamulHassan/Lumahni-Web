@@ -3,7 +3,6 @@ import { withRouter } from "react-router-dom";
 
 // Externals
 import PropTypes from "prop-types";
-import compose from "recompose/compose";
 
 // Redux Helpers
 import { connect } from "react-redux";
@@ -23,10 +22,6 @@ import { userLogout, resetUserLogout } from "../../redux/actions/userDbAction";
 import styles from "./styles";
 
 class Logout extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
     this.props.userLogout();
   }

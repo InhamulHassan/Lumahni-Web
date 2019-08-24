@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 
 // Externals
 import PropTypes from "prop-types";
@@ -89,10 +88,18 @@ class Genres extends Component {
       prevArrow: <ArrowIconButton isPrev={true} />,
       responsive: [
         {
+          breakpoint: 1280,
+          settings: {
+            slidesToShow: 10,
+            slidesToScroll: 8,
+            infinite: true
+          }
+        },
+        {
           breakpoint: 1024,
           settings: {
             slidesToShow: 8,
-            slidesToScroll: 2,
+            slidesToScroll: 6,
             infinite: true
           }
         },
@@ -100,7 +107,7 @@ class Genres extends Component {
           breakpoint: 800,
           settings: {
             slidesToShow: 6,
-            slidesToScroll: 2
+            slidesToScroll: 4
           }
         },
         {
@@ -114,7 +121,7 @@ class Genres extends Component {
           breakpoint: 480,
           settings: {
             slidesToShow: 3,
-            slidesToScroll: 1
+            slidesToScroll: 2
           }
         },
         {
@@ -285,11 +292,12 @@ class Genres extends Component {
               <div className={classes.genreDetailsContainer}>
                 {this.renderGenreDetails()}
               </div>
-              <div className={classes.bookTableContainer}>
-                {this.renderGenreBooks()}
+              <div className={classes.bookTableScrollWrapper}>
+                <div className={classes.bookTableContainer}>
+                  {this.renderGenreBooks()}
+                </div>
               </div>
             </div>
-
             <div className={classes.pagination}>
               <Typography variant="caption">1-6 of 20</Typography>
               <IconButton>

@@ -62,11 +62,11 @@ class AuthorEditIcon extends Component {
           onClose={this.handleDialogClose}
           TransitionComponent={Transition}
         >
-          <FormDialog title="Edit Book" handleClose={this.handleDialogClose}>
+          <FormDialog title="Edit Author" handleClose={this.handleDialogClose}>
             <AuthorEditFormComponent
               handleClose={this.handleDialogClose}
               open={open}
-              authorData={authorData}
+              authorPropsData={authorData}
             />
           </FormDialog>
         </Dialog>

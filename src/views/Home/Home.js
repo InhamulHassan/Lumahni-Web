@@ -86,7 +86,7 @@ class Home extends Component {
     return (
       <Grid container spacing={3}>
         {books.map(book => (
-          <Grid item key={book.id} lg={2} md={4} xs={6}>
+          <Grid item key={book.id} lg={2} md={3} sm={4} xs={6}>
             <Link
               className={classes.link}
               to={{
@@ -136,6 +136,19 @@ class Home extends Component {
   }
 }
 
+Home.defaultProps = {
+  books: [],
+  loading: true,
+  error: ""
+};
+
+Home.propTypes = {
+  classes: PropTypes.object.isRequired,
+  books: PropTypes.array.isRequired,
+  loading: PropTypes.bool.isRequired
+};
+
+
 const mapStateToProps = state => {
   return {
     books: state.book.data,
@@ -147,18 +160,6 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
   getBooks,
   resetGetBooks
-};
-
-Home.defaultProps = {
-  books: [],
-  loading: true,
-  error: ""
-};
-
-Home.propTypes = {
-  classes: PropTypes.object.isRequired,
-  books: PropTypes.array.isRequired,
-  loading: PropTypes.bool.isRequired
 };
 
 export default connect(

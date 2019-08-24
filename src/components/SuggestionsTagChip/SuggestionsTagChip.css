@@ -1,9 +1,11 @@
 .react-tags {
   position: relative;
-  padding: 17.5px 14px;
+  /* padding: 17.5px 14px; */
+  padding: 17.5px 0 17.5px 14px;
   margin: 16px 24px 16px 0;
   height: 1.1875em;
-  width: 100%;
+  /* width: 100%; */
+  width: calc(100% - 17.5px);
   font-size: 1em;
   line-height: 1;
   cursor: text;
@@ -81,7 +83,8 @@
 .react-tags__search-input {
   max-width: 100%;
   margin: 0;
-  padding: 10.5px 14px; /* from 0*/
+  /* padding: 10.5px 14px; /* from 0*/
+  padding: 0; /* back to 0*/
   border: 0;
   outline: none;
   font-size: inherit;
@@ -97,7 +100,7 @@
 }
 
 .react-tags__search-input input {
-  width: 180px !important;
+  width: 150px !important; /* from 180px */
   outline: none;
   height: 100%;
   padding: 0px;
@@ -106,6 +109,23 @@
   color: #12161b;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   font-size: 16px;
+}
+
+/* Styling the placeholders */
+.react-tags__search-input input::-webkit-input-placeholder {
+    color: #12161B;
+}
+
+.react-tags__search-input input::-moz-placeholder {
+    color: #12161B;
+}
+
+.react-tags__search-input input::-ms-placeholder {
+    color: #12161B;
+}
+
+.react-tags__search-input input::placeholder {
+    color: #12161B;
 }
 
 .react-tags__search-input div {
@@ -117,6 +137,7 @@
   top: 100%;
   left: 0;
   width: 100%;
+  z-index: 50;
 }
 
 @media screen and (min-width: 30em) {

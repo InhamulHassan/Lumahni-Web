@@ -386,7 +386,7 @@ const mapStateToProps = state => {
     bookDetails: state.book.bookDetails,
     loading: state.book.dataLoading,
     error: state.book.error,
-    bookGrDetails: state.book_gr.bookDetails.data,
+    bookGrDetails: state.book_gr.bookDetails,
     bookGrLoading: state.book_gr.dataLoading,
     bookGrError: state.book_gr.error
   };

@@ -9,28 +9,57 @@ export default theme => ({
   group: {
     flexGrow: 1,
     padding: theme.spacing(2),
-    flexBasis: "100%"
+    flexBasis: "100%",
+    maxWidth: "100%",
+    boxSizing: "border-box"
   },
   groupLabel: {
     color: theme.palette.text.secondary
   },
-  groupField: {
+  generalGroup: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "flex-start",
+    flexDirection: "column",
+    flexGrow: 1,
+    padding: theme.spacing(2),
+    flexBasis: "100%",
+    maxWidth: "100%",
+    boxSizing: "border-box"
+  },
+  generalGroupField: {
+    display: "flex",
+    width: "100%",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    flexDirection: "row",
+    marginBottom: theme.spacing(2),
+    marginTop: theme.spacing(2),
+    [theme.breakpoints.down("xs")]: {
+      flexDirection: "column"
+    }
+  },
+  textFieldWrapper: {
+    width: "100%",
     marginBottom: theme.spacing(2),
     marginTop: theme.spacing(2),
     display: "flex",
     alignItems: "flex-start",
-    justifyContent: "space-between"
-  },
-  field: {
-    marginBottom: theme.spacing(2),
-    marginTop: theme.spacing(2),
-    display: "flex",
-    alignItems: "flex-start"
+    flexDirection: "column"
   },
   textField: {
-    width: "320px",
+    // width: "320px",
+    width: "auto",
     maxWidth: "100%",
-    marginRight: theme.spacing(3)
+    marginRight: theme.spacing(3),
+    [theme.breakpoints.down("md")]: {
+      "& $textField": {
+        width: "auto"
+      }
+    },
+    [theme.breakpoints.down("xs")]: {
+      width: "100%"
+    }
   },
   textFieldFull: {
     marginRight: theme.spacing(3)
@@ -52,21 +81,45 @@ export default theme => ({
     marginBottom: theme.spacing(2),
     marginTop: theme.spacing(1)
   },
-  errorFieldContainer: {
-    width: "320px",
-    maxWidth: "100%",
-    marginRight: theme.spacing(3)
-  },
   submitError: {
     color: theme.palette.danger.main,
     alignText: "center",
     marginBottom: theme.spacing(1),
     marginTop: theme.spacing(2)
   },
-  progressWrapper: {
-    paddingTop: "48px",
-    paddingBottom: "24px",
+  progressContainer: {
+    position: "fixed",
+    top: "0",
+    left: "0",
+    zIndex: "15",
+    display: "flex",
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  searchInputAdornment: {
+    width: "50px",
+    right: "0",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  bookQuickViewWrapper: {
+    margin: "8px 16px",
+    display: "flex",
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  quickViewProgressWrapper: {
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  errorWrapper: {
+    paddingTop: "40vh",
+    paddingBottom: "40vh",
     display: "flex",
     justifyContent: "center"
-  }
+  },
 });

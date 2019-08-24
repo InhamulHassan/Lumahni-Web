@@ -27,6 +27,8 @@ const initialState = {
   genreDetails: {},
   genreBooks: {},
   genreId: null,
+  editSuccess: false,
+  editLoading: false,
   error: ""
 };
 
@@ -107,24 +109,26 @@ const genreDbReducer = (state = initialState, action) => {
     case EDIT_GENRE_PENDING:
       return {
         ...state,
-        dataLoading: action.dataLoading
+        editLoading: action.dataLoading
       };
     case EDIT_GENRE_SUCCESS:
       return {
         ...state,
-        dataLoading: action.dataLoading,
-        genreDetails: action.payload
+        editLoading: action.dataLoading,
+        editSuccess: action.payload.success,
+        genreDetails: action.payload.changesMade // added
       };
     case EDIT_GENRE_FAILURE:
       return {
         ...state,
-        dataLoading: action.dataLoading,
+        editLoading: action.dataLoading,
         error: action.payload
       };
     case EDIT_GENRE_RESET:
       return {
         ...state,
-        dataLoading: false,
+        editLoading: false,
+        editSuccess: false,
         genreDetails: {},
         error: ""
       };

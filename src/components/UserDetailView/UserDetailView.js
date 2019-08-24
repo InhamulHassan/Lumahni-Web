@@ -63,13 +63,12 @@ class UserDetailView extends Component {
   };
 
   render() {
-    const { classes, className, ...rest } = this.props;
-    const { firstName, lastName, phone, city, province, email } = this.state;
+    const { classes, className, userDetails, loading, error } = this.props;
 
     const rootClassName = classNames(classes.root, className);
 
     return (
-      <MainView {...rest} className={rootClassName}>
+      <MainView className={rootClassName}>
         <MainViewHeader>
           <MainViewLabel
             subtitle="The information can be edited"
@@ -84,14 +83,14 @@ class UserDetailView extends Component {
                 helperText="Please specify the first name"
                 label="First name"
                 required
-                value={firstName}
+                value={userDetails.first_name}
                 variant="outlined"
               />
               <TextField
                 className={classes.textField}
                 label="Last name"
                 required
-                value={lastName}
+                value={userDetails.last_name}
                 variant="outlined"
               />
             </div>
@@ -100,14 +99,14 @@ class UserDetailView extends Component {
                 className={classes.textField}
                 label="Email Address"
                 required
-                value={email}
+                value={userDetails.email_address}
                 variant="outlined"
               />
               <TextField
                 className={classes.textField}
-                label="Phone Number"
+                label="Mobile Number"
                 type="number"
-                value={phone}
+                value={userDetails.mobile_number}
                 variant="outlined"
               />
             </div>
@@ -119,7 +118,7 @@ class UserDetailView extends Component {
                 required
                 select
                 SelectProps={{ native: true }}
-                value={city}
+                value={""}
                 variant="outlined"
               >
                 {cityList.map(option => (
@@ -132,7 +131,7 @@ class UserDetailView extends Component {
                 className={classes.textField}
                 label="Provice"
                 required
-                value={province}
+                value={""}
                 variant="outlined"
               />
             </div>
@@ -150,7 +149,10 @@ class UserDetailView extends Component {
 
 UserDetailView.propTypes = {
   className: PropTypes.string,
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  userDetails: PropTypes.object.isRequired,
+  loading: PropTypes.bool,
+  error: PropTypes.string
 };
 
 export default withStyles(styles)(UserDetailView);

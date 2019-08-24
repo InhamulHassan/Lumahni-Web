@@ -11,8 +11,6 @@ import validate from "validate.js";
 // Material components, helpers
 import {
   CircularProgress,
-  IconButton,
-  InputAdornment,
   TextField,
   Typography,
   Button,
@@ -21,8 +19,7 @@ import {
 
 // Material icons
 import {
-  ErrorOutlineRounded as ErrorIcon,
-  SearchRounded as SearchIcon
+  ErrorOutlineRounded as ErrorIcon
 } from "@material-ui/icons";
 
 // Shared components
@@ -66,11 +63,11 @@ class GenreFormComponent extends Component {
     };
   }
 
-  componentDidUpdate() {
-    if (!!this.props.id) {
-      this.props.handleClose();
-    }
-  }
+  // componentDidUpdate() {
+  //   if (!!this.props.id) {
+  //     this.props.handleClose();
+  //   }
+  // }
 
   componentWillUnmount() {
     const id = this.props.id;
@@ -95,7 +92,6 @@ class GenreFormComponent extends Component {
   };
 
   onSubmit = event => {
-    event.preventDefault();
     const {
       genreName,
       description,
@@ -104,9 +100,12 @@ class GenreFormComponent extends Component {
       imgThumbnailLink
     } = this.state;
 
+    // cleaning the text from stray HTML tags
+    var cleanedDescription = htmlCleaner(description);
+
     const formData = {
       genreName,
-      description,
+      description: cleanedDescription,
       imgLink,
       imgLargeLink,
       imgThumbnailLink
@@ -137,8 +136,21 @@ class GenreFormComponent extends Component {
     );
   };
 
+  getErrorMessage = () => {
+    const { classes, error } = this.props;
+
+    return (
+      error && (
+        <Typography className={classes.fieldError} variant="body2">
+          <ErrorIcon className={classes.errorIcon} />
+          {error}
+        </Typography>
+      )
+    );
+  };
+
   render() {
-    const { classes, className, id, loading, error } = this.props;
+    const { classes, className, loading } = this.props;
 
     const { errors } = this.state;
 
@@ -150,7 +162,7 @@ class GenreFormComponent extends Component {
           <MainViewLabel subtitle="Add genre details" title="Add a New Genre" />
         </MainViewHeader>
         <MainViewContent noPadding>
-          <form className={classes.form} onSubmit={this.onSubmit}>
+          <form className={classes.form}>
             <div className={classes.group}>
               <Typography className={classes.groupLabel} variant="h6">
                 Genre Information
@@ -259,6 +271,7 @@ class GenreFormComponent extends Component {
         </MainViewContent>
         <MainViewFooter className={classes.mainViewFooter}>
           {this.getSubmitErrorMessage()}
+          {this.getErrorMessage()}
           {loading ? (
             <div className={classes.progressWrapper}>
               <CircularProgress />
@@ -283,7 +296,6 @@ GenreFormComponent.propTypes = {
 
 GenreFormComponent.defaultProps = {
   open: false,
-  handleClose: () => {},
   id: "",
   loading: false,
   error: null

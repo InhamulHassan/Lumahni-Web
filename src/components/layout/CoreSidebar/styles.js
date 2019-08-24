@@ -35,7 +35,11 @@ export default theme => ({
   },
   avatar: {
     width: "100px",
-    height: "100px"
+    height: "100px",
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.common.white,
+    fontSize: "3vw",
+    textDecoration: "none"
   },
   nameText: {
     marginTop: theme.spacing(2)
@@ -51,5 +55,19 @@ export default theme => ({
   listDivider: {
     marginBottom: theme.spacing(2),
     marginTop: theme.spacing(2)
+  },
+  progressWrapper: {
+    width: "100%",
+    minHeight: "150px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  errorWrapper: {
+    width: "100%",
+    minHeight: "150px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
   }
 });

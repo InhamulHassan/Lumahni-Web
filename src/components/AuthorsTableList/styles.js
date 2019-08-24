@@ -1,7 +1,13 @@
 // Component styles
 
 export default theme => ({
-  root: {},
+  root: {
+    position: "relative",
+    display: "flex",
+    flex: "1",
+    width:"100%",
+    height: "auto"
+  },
   tableRow: {
     height: "64px"
   },

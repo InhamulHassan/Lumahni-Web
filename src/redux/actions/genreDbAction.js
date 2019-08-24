@@ -191,7 +191,7 @@ export const editGenre = data => {
       });
       const result = response.data;
       if (result.success) {
-        dispatch(editGenreSuccess(result.changesMade));
+        dispatch(editGenreSuccess(result));
       } else {
         dispatch(editGenreFailure("Failed"));
       }

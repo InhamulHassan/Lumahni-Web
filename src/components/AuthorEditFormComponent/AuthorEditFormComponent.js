@@ -89,17 +89,18 @@ class AuthorEditFormComponent extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     // TODO: do this by comparing prevprops and this props
-    if (prevProps !== this.props) {
+    if (prevProps.editSuccess !== this.props.editSuccess) {
       this.props.handleClose();
     }
   }
 
   componentWillUnmount() {
+    // get the id/grid before reset
+    const { id, grid } = this.props.editedDetails;
     this.props.resetGetAuthorByGrId();
-    this.props.resetEditAuthor();
     this.props.resetGetGenres();
+    this.props.resetEditAuthor();
     // to refresh the authors for the Authors View
-    const { id, grid } = this.props.authorData;
     this.props.getAuthorById(id);
     this.props.getAuthorByGrId(grid);
   }
@@ -114,7 +115,6 @@ class AuthorEditFormComponent extends Component {
     this.setState(newState);
 
     if (!errors) {
-      // this.props.editAuthor(data).then(this.props.handleClose());
       this.props.editAuthor(data);
     }
   };
@@ -132,10 +132,13 @@ class AuthorEditFormComponent extends Component {
       genreTags
     } = this.state;
 
+    // cleaning the text from stray HTML tags
+    var cleanedBiography = htmlCleaner(biography);
+
     const formData = {
       id,
       authorName,
-      biography,
+      biography: cleanedBiography,
       grid,
       imgLink,
       imgLargeLink,
@@ -191,11 +194,11 @@ class AuthorEditFormComponent extends Component {
       img_m,
       img_s,
       genres
-    } = this.props.authorData;
+    } = this.props.authorPropsData;
 
     let genreTags = genres || [];
 
-    if (Object.keys(this.props.authorData).length > 0) {
+    if (Object.keys(this.props.authorPropsData).length > 0) {
       this.setState({
         id: id,
         authorName: name,
@@ -218,7 +221,7 @@ class AuthorEditFormComponent extends Component {
 
   handleGenreTagAddition = tag => {
     const genreTagArray = this.state.genreTags;
-    if (!genreTagArray.includes(tag)) {
+    if (!genreTagArray.find(item => item.id === tag.id)) {
       const genreTags = [].concat(genreTagArray, tag);
       this.setState({ genreTags });
     }
@@ -246,6 +249,42 @@ class AuthorEditFormComponent extends Component {
     }
   };
 
+  renderAuthorQuickView = () => {
+    const {
+      classes,
+      authorGrDetails,
+      authorGrLoading,
+      authorGrError
+    } = this.props;
+
+    if (authorGrLoading) {
+      return (
+        <div className={classes.quickViewProgressWrapper}>
+          <CircularProgress size={40} />
+        </div>
+      );
+    }
+
+    // the statement after && is risky better find an alternative (to not show error when similar_books is null)
+    if (authorGrError && !Object.keys(authorGrDetails).length > 0) {
+      return <div className={classes.errorWrapper}>{authorGrError}</div>;
+    }
+
+    // the statement after && is risky better find an alternative (to not show error when similar_books is null)
+    if (authorGrError && authorGrDetails.author == null) {
+      return <div className={classes.errorWrapper}>{authorGrError}</div>;
+    }
+
+    if (Object.keys(authorGrDetails).length > 0) {
+      return (
+        <AuthorQuickView
+          authorGRData={authorGrDetails.author}
+          populateFields={this.populateGrFields}
+        />
+      );
+    }
+  };
+  
   getSubmitErrorMessage = () => {
     const { isValid, errors } = this.state;
     const { classes } = this.props;
@@ -262,36 +301,52 @@ class AuthorEditFormComponent extends Component {
     );
   };
 
+  getErrorMessage = () => {
+    const { classes, error, authorGrError } = this.props;
+
+    if (error || authorGrError) {
+      return (
+        <Typography className={classes.fieldError} variant="body2">
+          <ErrorIcon className={classes.errorIcon} />
+          {error || authorGrError}
+        </Typography>
+      );
+    }
+  };
+
   render() {
     const {
       classes,
       className,
-      authorData,
-      authorDetails,
       loading,
-      error,
       authorGrDetails,
-      authorGrLoading,
-      authorGrError
+      authorGrLoading
     } = this.props;
+
     const { errors, genreTags, genreSuggesions } = this.state;
+
     const rootClassName = classNames(classes.root, className);
 
     return (
       <MainView className={rootClassName}>
         <MainViewHeader>
           <MainViewLabel
-            subtitle="Add the details of the author"
-            title="Add a New Author"
+            subtitle="Modify the details of the author"
+            title="Edit Author Details"
           />
         </MainViewHeader>
         <MainViewContent noPadding>
-          <form className={classes.form} onSubmit={this.onSubmit}>
+          <form className={classes.form}>
+            {loading && (
+              <div className={classes.progressContainer}>
+                <CircularProgress size={100} />
+              </div>
+            )}
             <div className={classes.group}>
               <Typography className={classes.groupLabel} variant="h6">
                 Author Information
               </Typography>
-              <div className={classes.field}>
+              <div className={classes.textFieldWrapper}>
                 <TextField
                   className={classes.textFieldFull}
                   name="authorName"
@@ -310,7 +365,7 @@ class AuthorEditFormComponent extends Component {
                   {errors.authorName[0]}
                 </Typography>
               )}
-              <div className={classes.field}>
+              <div className={classes.textFieldWrapper}>
                 <TextField
                   className={classes.textFieldFull}
                   name="biography"
@@ -336,36 +391,40 @@ class AuthorEditFormComponent extends Component {
               <Typography className={classes.groupLabel} variant="h6">
                 General Details
               </Typography>
-              <div className={classes.groupField}>
-                <TextField
-                  className={classes.textField}
-                  name="grid"
-                  label="Goodreads Author ID"
-                  helperText="Please specify the Goodreads ID of the author"
-                  type="text"
-                  value={this.state.grid}
-                  variant="outlined"
-                  onChange={this.handleChange}
-                  onInput={e => {
-                    e.target.value = e.target.value.replace(/[^0-9]/g, "");
-                  }}
-                  InputProps={{
-                    endAdornment: !!this.state.grid ? (
-                      <InputAdornment position="end">
-                        <IconButton tabIndex="-1" onClick={this.searchByGrid}>
-                          {!!authorGrLoading ? (
-                            <CircularProgress size="2" />
+              <div className={classes.generalGroupField}>
+                <div className={classes.textFieldWrapper}>
+                  <TextField
+                    className={classes.textField}
+                    name="grid"
+                    label="Goodreads Author ID"
+                    helperText="Please specify the Goodreads ID of the author"
+                    type="text"
+                    value={this.state.grid}
+                    variant="outlined"
+                    onChange={this.handleChange}
+                    onInput={e => {
+                      e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                    }}
+                    InputProps={{
+                      endAdornment: !!this.state.grid ? (
+                        <InputAdornment
+                          position="end"
+                          className={classes.searchInputAdornment}
+                        >
+                          {authorGrLoading ? (
+                            <CircularProgress size={20} />
                           ) : (
-                            <SearchIcon />
+                            <IconButton
+                              tabIndex="-1"
+                              onClick={this.searchByGrid}
+                            >
+                              <SearchIcon />
+                            </IconButton>
                           )}
-                        </IconButton>
-                      </InputAdornment>
-                    ) : null
-                  }}
-                />
-              </div>
-              <div className={classes.groupField}>
-                <div className={classes.errorFieldContainer}>
+                        </InputAdornment>
+                      ) : null
+                    }}
+                  />
                   {errors.grid && (
                     <Typography className={classes.fieldError} variant="body2">
                       <ErrorIcon className={classes.errorIcon} />
@@ -374,23 +433,15 @@ class AuthorEditFormComponent extends Component {
                   )}
                 </div>
               </div>
-              <div className={classes.groupField}>
-                {Object.keys(authorGrDetails).length > 0 &&
-                  (!!authorGrLoading ? (
-                    <CircularProgress size="2" />
-                  ) : (
-                    <AuthorQuickView
-                      authorGRData={authorGrDetails.author}
-                      populateFields={this.populateGrFields}
-                    />
-                  ))}
+              <div className={classes.authorQuickViewWrapper}>
+                {this.renderAuthorQuickView()}
               </div>
             </div>
             <div className={classes.group}>
               <Typography className={classes.groupLabel} variant="h6">
                 Image Links
               </Typography>
-              <div className={classes.field}>
+              <div className={classes.textFieldWrapper}>
                 <TextField
                   className={classes.textFieldFull}
                   name="imgLink"
@@ -408,7 +459,7 @@ class AuthorEditFormComponent extends Component {
                   {errors.imgLink[0]}
                 </Typography>
               )}
-              <div className={classes.field}>
+              <div className={classes.textFieldWrapper}>
                 <TextField
                   className={classes.textFieldFull}
                   name="imgLargeLink"
@@ -426,7 +477,7 @@ class AuthorEditFormComponent extends Component {
                   {errors.imgLargeLink[0]}
                 </Typography>
               )}
-              <div className={classes.field}>
+              <div className={classes.textFieldWrapper}>
                 <TextField
                   className={classes.textFieldFull}
                   name="imgThumbnailLink"
@@ -449,7 +500,7 @@ class AuthorEditFormComponent extends Component {
               <Typography className={classes.groupLabel} variant="h6">
                 Author Genres
               </Typography>
-              <div className={classes.field}>
+              <div className={classes.textFieldWrapper}>
                 <SuggestionsTagChip
                   tags={genreTags}
                   suggesions={genreSuggesions}
@@ -460,24 +511,13 @@ class AuthorEditFormComponent extends Component {
               </div>
             </div>
           </form>
-          {(error || authorGrError) && (
-            <div className={classes.errorWrapper}>
-              {error || ""}
-              {authorGrError || ""}
-            </div>
-          )}
         </MainViewContent>
         <MainViewFooter className={classes.mainViewFooter}>
           {this.getSubmitErrorMessage()}
-          {loading ? (
-            <div className={classes.progressWrapper}>
-              <CircularProgress />
-            </div>
-          ) : (
-            <Button color="primary" variant="contained" onClick={this.onSubmit}>
-              Edit Author
-            </Button>
-          )}
+          {this.getErrorMessage()}
+          <Button color="primary" variant="contained" onClick={this.onSubmit}>
+            Edit Author
+          </Button>
         </MainViewFooter>
       </MainView>
     );
@@ -488,19 +528,20 @@ AuthorEditFormComponent.propTypes = {
   className: PropTypes.string,
   classes: PropTypes.object.isRequired,
   open: PropTypes.bool.isRequired,
+  authorPropsData: PropTypes.object.isRequired,
   handleClose: PropTypes.func.isRequired
 };
 
 AuthorEditFormComponent.defaultProps = {
   open: false,
-  handleClose: () => {},
   genres: {},
   genreLoading: false,
   genreError: "",
   authorGrDetails: {},
   authorGrLoading: false,
   authorGrError: null,
-  authorDetails: {},
+  editSuccess: false,
+  editedDetails: {},
   loading: false,
   error: null
 };
@@ -510,11 +551,12 @@ const mapStateToProps = state => {
     genres: state.genre.data,
     genreLoading: state.genre.dataLoading,
     genreError: state.genre.error,
-    authorGrDetails: state.author_gr.authorDetails.data,
+    authorGrDetails: state.author_gr.authorDetails,
     authorGrLoading: state.author_gr.dataLoading,
     authorGrError: state.author_gr.error,
-    authorDetails: state.author.data,
-    loading: state.author.dataLoading,
+    editSuccess: state.author.editSuccess,
+    editedDetails: state.author.authorDetails,
+    loading: state.author.editLoading,
     error: state.author.error
   };
 };

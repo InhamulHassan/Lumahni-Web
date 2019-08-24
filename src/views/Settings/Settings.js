@@ -3,6 +3,9 @@ import React, { Component } from "react";
 // Externals
 import PropTypes from "prop-types";
 
+// Redux Helpers
+import { connect } from "react-redux";
+
 // Material helpers
 import { withStyles } from "@material-ui/core";
 
@@ -15,12 +18,35 @@ import { CoreLayout } from "../../layout/CoreLayout";
 // Custom components
 import { NotificationSettings, PasswordSettings } from "../../components";
 
+// Shared services
+import {
+  getUserDetails,
+  resetGetUserDetails,
+  passwordReset,
+  resetPasswordReset
+} from "../../redux/actions/userDbAction";
+
 // Component styles
 import styles from "./styles";
 
 class Settings extends Component {
+  componentDidMount() {
+    this.props.getUserDetails();
+  }
+
+  componentWillUnmount() {
+    this.props.resetPasswordReset();
+  }
+
   render() {
-    const { classes } = this.props;
+    const {
+      classes,
+      authUser,
+      passwordReset,
+      resetSuccess,
+      loading,
+      error
+    } = this.props;
 
     return (
       <CoreLayout title="Settings">
@@ -30,7 +56,13 @@ class Settings extends Component {
               <NotificationSettings />
             </Grid>
             <Grid item md={5} xs={12}>
-              <PasswordSettings />
+              <PasswordSettings
+                userDetails={authUser}
+                resetSuccess={resetSuccess}
+                passwordReset={passwordReset}
+                loading={loading}
+                error={error}
+              />
             </Grid>
           </Grid>
         </div>
@@ -43,4 +75,23 @@ Settings.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(Settings);
+const mapStateToProps = state => {
+  return {
+    authUser: state.user.authUser,
+    resetSuccess: state.user.resetSuccess,
+    loading: state.user.resetLoading,
+    error: state.user.resetError
+  };
+};
+
+const mapDispatchToProps = {
+  getUserDetails,
+  resetGetUserDetails,
+  passwordReset,
+  resetPasswordReset
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(Settings));

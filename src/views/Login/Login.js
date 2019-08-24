@@ -3,7 +3,6 @@ import { withRouter } from "react-router-dom";
 
 // Externals
 import PropTypes from "prop-types";
-import compose from "recompose/compose";
 
 // Redux Helpers
 import { connect } from "react-redux";
@@ -55,6 +54,7 @@ class Login extends Component {
   }
 
   componentWillUnmount() {
+    // To persist the user auth details
     this.props.resetUserLogin();
     this.props.resetFetchUnsplashPhoto();
     this.props.resetFetchQuote();

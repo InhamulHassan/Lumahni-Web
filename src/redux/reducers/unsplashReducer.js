@@ -1,8 +1,8 @@
 import {
-  FETCH_UNSPLASH_PHOTO_PENDING,
-  FETCH_UNSPLASH_PHOTO_SUCCESS,
-  FETCH_UNSPLASH_PHOTO_FAILURE,
-  FETCH_UNSPLASH_PHOTO_RESET
+  GET_UNSPLASH_PHOTO_PENDING,
+  GET_UNSPLASH_PHOTO_SUCCESS,
+  GET_UNSPLASH_PHOTO_FAILURE,
+  GET_UNSPLASH_PHOTO_RESET
 } from "../actions/types";
 
 const initialState = {
@@ -13,24 +13,24 @@ const initialState = {
 
 const genreDbReducer = (state = initialState, action) => {
   switch (action.type) {
-    case FETCH_UNSPLASH_PHOTO_PENDING:
+    case GET_UNSPLASH_PHOTO_PENDING:
       return {
         ...state,
         dataLoading: action.dataLoading
       };
-    case FETCH_UNSPLASH_PHOTO_SUCCESS:
+    case GET_UNSPLASH_PHOTO_SUCCESS:
       return {
         ...state,
         dataLoading: action.dataLoading,
         photoDetails: action.payload
       };
-    case FETCH_UNSPLASH_PHOTO_FAILURE:
+    case GET_UNSPLASH_PHOTO_FAILURE:
       return {
         ...state,
         dataLoading: action.dataLoading,
         error: action.payload
       };
-    case FETCH_UNSPLASH_PHOTO_RESET:
+    case GET_UNSPLASH_PHOTO_RESET:
       return {
         ...state,
         dataLoading: false,

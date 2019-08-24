@@ -1,32 +1,27 @@
 import {
-  GET_ALL_AUTHORS_PENDING,
-  GET_ALL_AUTHORS_SUCCESS,
-  GET_ALL_AUTHORS_FAILURE,
-  GET_ALL_AUTHORS_RESET,
-  GET_AUTHOR_BY_ID_PENDING,
-  GET_AUTHOR_BY_ID_SUCCESS,
-  GET_AUTHOR_BY_ID_FAILURE,
-  GET_AUTHOR_BY_ID_RESET,
-  ADD_AUTHOR_PENDING,
-  ADD_AUTHOR_SUCCESS,
-  ADD_AUTHOR_FAILURE,
-  ADD_AUTHOR_RESET,
-  EDIT_AUTHOR_PENDING,
-  EDIT_AUTHOR_SUCCESS,
-  EDIT_AUTHOR_FAILURE,
-  EDIT_AUTHOR_RESET,
-  GET_AUTHOR_BOOKS_PENDING,
-  GET_AUTHOR_BOOKS_SUCCESS,
-  GET_AUTHOR_BOOKS_FAILURE,
-  GET_AUTHOR_BOOKS_RESET
+  GET_ALL_MEMBERS_PENDING,
+  GET_ALL_MEMBERS_SUCCESS,
+  GET_ALL_MEMBERS_FAILURE,
+  GET_ALL_MEMBERS_RESET,
+  GET_MEMBER_BY_ID_PENDING,
+  GET_MEMBER_BY_ID_SUCCESS,
+  GET_MEMBER_BY_ID_FAILURE,
+  GET_MEMBER_BY_ID_RESET,
+  ADD_MEMBER_PENDING,
+  ADD_MEMBER_SUCCESS,
+  ADD_MEMBER_FAILURE,
+  ADD_MEMBER_RESET,
+  EDIT_MEMBER_PENDING,
+  EDIT_MEMBER_SUCCESS,
+  EDIT_MEMBER_FAILURE,
+  EDIT_MEMBER_RESET
 } from "../actions/types";
 
 const initialState = {
   dataLoading: false,
   data: [],
-  authorDetails: {},
-  authorBooks: {},
-  authorId: null,
+  memberDetails: {},
+  memberId: null,
   editSuccess: false,
   editLoading: false,
   error: ""
@@ -34,126 +29,102 @@ const initialState = {
 
 const authorDbReducer = (state = initialState, action) => {
   switch (action.type) {
-    case GET_ALL_AUTHORS_PENDING:
+    case GET_ALL_MEMBERS_PENDING:
       return {
         ...state,
         dataLoading: action.dataLoading
       };
-    case GET_ALL_AUTHORS_SUCCESS:
+    case GET_ALL_MEMBERS_SUCCESS:
       return {
         ...state,
         dataLoading: action.dataLoading,
         data: action.payload
       };
-    case GET_ALL_AUTHORS_FAILURE:
+    case GET_ALL_MEMBERS_FAILURE:
       return {
         ...state,
         dataLoading: action.dataLoading,
         error: action.payload
       };
-    case GET_ALL_AUTHORS_RESET:
+    case GET_ALL_MEMBERS_RESET:
       return {
         ...state,
         dataLoading: false,
         data: [],
         error: ""
       };
-    case GET_AUTHOR_BY_ID_PENDING:
+    case GET_MEMBER_BY_ID_PENDING:
       return {
         ...state,
         dataLoading: action.dataLoading
       };
-    case GET_AUTHOR_BY_ID_SUCCESS:
+    case GET_MEMBER_BY_ID_SUCCESS:
       return {
         ...state,
         dataLoading: action.dataLoading,
-        authorDetails: action.payload
+        memberDetails: action.payload
       };
-    case GET_AUTHOR_BY_ID_FAILURE:
+    case GET_MEMBER_BY_ID_FAILURE:
       return {
         ...state,
         dataLoading: action.dataLoading,
         error: action.payload
       };
-    case GET_AUTHOR_BY_ID_RESET:
+    case GET_MEMBER_BY_ID_RESET:
       return {
         ...state,
         dataLoading: false,
-        authorDetails: {},
+        memberDetails: {},
         error: ""
       };
-    case ADD_AUTHOR_PENDING:
+    case ADD_MEMBER_PENDING:
       return {
         ...state,
         dataLoading: action.dataLoading
       };
-    case ADD_AUTHOR_SUCCESS:
+    case ADD_MEMBER_SUCCESS:
       return {
         ...state,
         dataLoading: action.dataLoading,
-        authorId: action.payload
+        memberId: action.payload
       };
-    case ADD_AUTHOR_FAILURE:
+    case ADD_MEMBER_FAILURE:
       return {
         ...state,
         dataLoading: action.dataLoading,
         error: action.payload
       };
-    case ADD_AUTHOR_RESET:
+    case ADD_MEMBER_RESET:
       return {
         ...state,
         dataLoading: false,
-        authorId: null,
+        memberId: null,
         error: ""
       };
-    case EDIT_AUTHOR_PENDING:
+    case EDIT_MEMBER_PENDING:
       return {
         ...state,
         editLoading: action.dataLoading
       };
-    case EDIT_AUTHOR_SUCCESS:
+    case EDIT_MEMBER_SUCCESS:
       return {
         ...state,
         editLoading: action.dataLoading,
         editSuccess: action.payload.success,
-        authorDetails: action.payload.changesMade // added
+        memberDetails: action.payload.changesMade // added
       };
-    case EDIT_AUTHOR_FAILURE:
+    case EDIT_MEMBER_FAILURE:
       return {
         ...state,
         editLoading: action.dataLoading,
         error: action.payload
       };
-    case EDIT_AUTHOR_RESET:
+    case EDIT_MEMBER_RESET:
       return {
         ...state,
         editLoading: false,
         editSuccess: false,
-        authorDetails: {}, // added
-        error: ""
-      };
-    case GET_AUTHOR_BOOKS_PENDING:
-      return {
-        ...state,
-        dataLoading: action.dataLoading
-      };
-    case GET_AUTHOR_BOOKS_SUCCESS:
-      return {
-        ...state,
-        dataLoading: action.dataLoading,
-        authorBooks: action.payload
-      };
-    case GET_AUTHOR_BOOKS_FAILURE:
-      return {
-        ...state,
-        dataLoading: action.dataLoading,
-        error: action.payload
-      };
-    case GET_AUTHOR_BOOKS_RESET:
-      return {
-        ...state,
-        dataLoading: false, //changed from true
-        authorBooks: {},
+        memberDetails: {}, // added
         error: ""
       };
     default:

@@ -34,8 +34,6 @@ class AuthorsTableList extends Component {
 
     this.state = {
       selectedAuthors: [],
-      rowsPerPage: 10,
-      page: 0,
       noResults: false
     };
   }
@@ -83,14 +81,6 @@ class AuthorsTableList extends Component {
     onSelect(newSelectedAuthors);
   };
 
-  handleChangePage = (event, page) => {
-    this.setState({ page });
-  };
-
-  handleChangeRowsPerPage = event => {
-    this.setState({ rowsPerPage: event.target.value });
-  };
-
   isPresent = value => {
     const { filterQuery } = this.props;
     const val = value.toString().toLowerCase();
@@ -108,10 +98,12 @@ class AuthorsTableList extends Component {
       className,
       authors,
       filterQuery,
-      selectedColumn
+      selectedColumn,
+      rowsPerPage,
+      page
     } = this.props;
 
-    const { selectedAuthors, rowsPerPage, page, noResults } = this.state;
+    const { selectedAuthors, noResults } = this.state;
 
     const rootClassName = classNames(classes.root, className);
 
@@ -185,39 +177,39 @@ class AuthorsTableList extends Component {
                       selected={selectedAuthors.indexOf(author.id) !== -1}
                     >
                       <TableCell className={classes.tableCell}>
-                        <Link
-                          className={classes.link}
-                          to={{
-                            pathname: "/author",
-                            state: {
-                              id: author.id,
-                              grid: author.grid
+                        <div className={classes.tableCellInner}>
+                          <Checkbox
+                            checked={selectedAuthors.indexOf(author.id) !== -1}
+                            color="primary"
+                            onChange={event =>
+                              this.handleSelectOne(event, author.id)
                             }
-                          }}
-                        >
-                          <div className={classes.tableCellInner}>
-                            <Checkbox
-                              checked={
-                                selectedAuthors.indexOf(author.id) !== -1
+                            value="true"
+                          />
+                          <Link
+                            className={classes.link}
+                            to={{
+                              pathname: "/author",
+                              state: {
+                                id: author.id,
+                                grid: author.grid
                               }
-                              color="primary"
-                              onChange={event =>
-                                this.handleSelectOne(event, author.id)
-                              }
-                              value="true"
-                            />
-                            <Avatar
-                              className={classes.avatar}
-                              src={author.img_s}
-                            />
-                            <Typography
-                              className={classes.nameText}
-                              variant="body1"
-                            >
-                              {author.name}
-                            </Typography>
-                          </div>
-                        </Link>
+                            }}
+                          >
+                            <div className={classes.tableCellInner}>
+                              <Avatar
+                                className={classes.avatar}
+                                src={author.img_s}
+                              />
+                              <Typography
+                                className={classes.nameText}
+                                variant="body1"
+                              >
+                                {author.name}
+                              </Typography>
+                            </div>
+                          </Link>
+                        </div>
                       </TableCell>
                       <TableCell className={classes.tableCell}>
                         {author.id}
@@ -230,21 +222,6 @@ class AuthorsTableList extends Component {
               </TableBody>
             </Table>
           </PerfectScrollbar>
-          <TablePagination
-            backIconButtonProps={{
-              "aria-label": "Previous Page"
-            }}
-            component="div"
-            count={authors.length}
-            nextIconButtonProps={{
-              "aria-label": "Next Page"
-            }}
-            onChangePage={this.handleChangePage}
-            onChangeRowsPerPage={this.handleChangeRowsPerPage}
-            page={page}
-            rowsPerPage={rowsPerPage}
-            rowsPerPageOptions={[5, 10, 25]}
-          />
         </MainViewContent>
       </MainView>
     );
@@ -258,7 +235,9 @@ AuthorsTableList.propTypes = {
   onShowDetails: PropTypes.func,
   authors: PropTypes.array.isRequired,
   filterQuery: PropTypes.string,
-  selectedColumn: PropTypes.string
+  selectedColumn: PropTypes.string,
+  page: PropTypes.number.isRequired,
+  rowsPerPage: PropTypes.number.isRequired
 };
 
 AuthorsTableList.defaultProps = {

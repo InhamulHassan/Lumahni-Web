@@ -22,7 +22,8 @@ const bookGrReducer = (state = initialState, action) => {
       return {
         ...state,
         dataLoading: action.dataLoading,
-        bookDetails: action.payload
+        bookDetails: action.payload.data,
+        error: action.payload.errors ? action.payload.errors[0].message : "" // when no results are found or other errors
       };
     case GET_BOOK_BY_GRID_FAILURE:
       return {
@@ -33,7 +34,7 @@ const bookGrReducer = (state = initialState, action) => {
     case GET_BOOK_BY_GRID_RESET:
       return {
         ...state,
-        dataLoading: true, //changed
+        dataLoading: false, //changed
         bookDetails: {},
         error: ""
       };

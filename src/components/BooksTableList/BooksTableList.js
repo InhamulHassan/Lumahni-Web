@@ -57,6 +57,30 @@ class BookTableList extends Component {
     );
   };
 
+  renderGenres = genres => {
+    const { classes } = this.props;
+
+    console.log('genres - ', JSON.stringify(genres))
+
+    if (!genres) return null;
+
+    const length = Object.keys(genres).length;
+
+    return (
+      <div className={classes.genreContainer}>
+        {genres.map((genre, index) => (
+          <Typography
+            key={index}
+            className={classes.genreName}
+            variant="subtitle2"
+          >
+            {genre.name + (index < length - 1 ? ", " : "")}
+          </Typography>
+        ))}
+      </div>
+    );
+  };
+
   render() {
     const { books, className, classes } = this.props;
 
@@ -70,8 +94,9 @@ class BookTableList extends Component {
               <TableHead>
                 <TableRow>
                   <TableCell align="left">Title</TableCell>
-                  <TableCell align="left">Author</TableCell>
-                  <TableCell align="left">Rating</TableCell>
+                  <TableCell align="left">ISBN</TableCell>
+                  <TableCell align="left">GRID</TableCell>
+                  <TableCell align="left">Author/s</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -106,9 +131,14 @@ class BookTableList extends Component {
                       </Link>
                     </TableCell>
                     <TableCell className={classes.tableCell}>
+                      {book.isbn}
+                    </TableCell>
+                    <TableCell className={classes.tableCell}>
+                      {book.grid}
+                    </TableCell>
+                    <TableCell className={classes.tableCell}>
                       {this.renderAuthors(book.authors)}
                     </TableCell>
-                    <TableCell className={classes.tableCell}>Rating</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

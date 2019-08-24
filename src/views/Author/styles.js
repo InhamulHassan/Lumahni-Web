@@ -29,23 +29,13 @@ export default theme => ({
     position: "absolute",
     right: "50px"
   },
-  imageWrapper: {
+  authorAvatar: {
     position: "absolute",
-    top: "-70px",
-    left: "60px",
+    top: "-60px",
+    left: "50px",
     height: "150px",
     width: "150px",
-    borderRadius: "75px",
-    overflow: "hidden",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
     boxShadow: "0px 0px 25px -5px rgba(0,0,0,0.25)"
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-    objectFit: "cover"
   },
   bookAuthors: {
     width: "auto",
@@ -77,6 +67,10 @@ export default theme => ({
       display: "inline-block",
       marginLeft: theme.spacing(1),
       color: theme.palette.primary.main
+    },
+    "& .read-more-button:hover": {
+      color: theme.palette.primary.dark,
+      textDecoration: "underline"
     }
   },
   detailsContainer: {

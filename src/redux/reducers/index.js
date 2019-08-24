@@ -6,6 +6,7 @@ import bookGrReducer from "./bookGrReducer";
 import authorDbReducer from "./authorDbReducer";
 import authorGrReducer from "./authorGrReducer";
 import userDbReducer from "./userDbReducer";
+import memberDbReducer from "./memberDbReducer";
 import quoteReducer from "./quoteReducer";
 import unsplashReducer from "./unsplashReducer";
 
@@ -16,6 +17,7 @@ export default combineReducers({
   author: authorDbReducer,
   author_gr: authorGrReducer,
   user: userDbReducer,
+  member: memberDbReducer,
   quote: quoteReducer,
   unsplash: unsplashReducer
 });

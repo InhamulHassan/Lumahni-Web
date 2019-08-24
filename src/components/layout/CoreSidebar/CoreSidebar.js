@@ -8,6 +8,7 @@ import PropTypes from "prop-types";
 // Material components, helpers
 import {
   Avatar,
+  CircularProgress,
   Divider,
   List,
   ListSubheader,
@@ -26,6 +27,8 @@ import {
   PowerSettingsNewRounded as LogoutIcon
 } from "@material-ui/icons";
 
+import getInitials from "../../../helpers/getInitials";
+
 // External components
 import { ListItemLink } from "../ListItemLink";
 
@@ -33,6 +36,43 @@ import { ListItemLink } from "../ListItemLink";
 import styles from "./styles";
 
 class CoreSidebar extends Component {
+  renderUserDetails = () => {
+    const { classes, userDetails, loading, error } = this.props;
+
+    if (loading) {
+      return (
+        <div className={classes.progressWrapper}>
+          <CircularProgress size={20} />
+        </div>
+      );
+    }
+
+    if (error) {
+      return <div className={classes.errorWrapper}>{error}</div>;
+    }
+
+    if (Object.keys(userDetails).length > 0) {
+      let fullName = userDetails.full_name;
+      let userRole = userDetails.user_role;
+
+      return (
+        <div className={classes.profile}>
+          <Link to="/profile" className={classes.logoLink}>
+            <Avatar alt={fullName} className={classes.avatar}>
+              {getInitials(fullName)}
+            </Avatar>
+          </Link>
+          <Typography className={classes.nameText} variant="h6">
+            {fullName}
+          </Typography>
+          <Typography className={classes.bioText} variant="caption">
+            {userRole}
+          </Typography>
+        </div>
+      );
+    }
+  };
+
   render() {
     const { classes, className } = this.props;
 
@@ -50,21 +90,7 @@ class CoreSidebar extends Component {
           </Link>
         </div>
         <Divider className={classes.logoDivider} />
-        <div className={classes.profile}>
-          <Link to="/profile">
-            <Avatar
-              alt="Aryan Behzadi"
-              className={classes.avatar}
-              src="https://ui-avatars.com/api/?name=Aryan+Behzadi&size=256&bold=true"
-            ></Avatar>
-          </Link>
-          <Typography className={classes.nameText} variant="h6">
-            Aryan Behzadi
-          </Typography>
-          <Typography className={classes.bioText} variant="caption">
-            Librarian
-          </Typography>
-        </div>
+        {this.renderUserDetails()}
         <Divider className={classes.profileDivider} />
         <List component="div" disablePadding>
           <ListItemLink
@@ -126,7 +152,10 @@ class CoreSidebar extends Component {
 
 CoreSidebar.propTypes = {
   className: PropTypes.string,
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  userDetails: PropTypes.object.isRequired,
+  loading: PropTypes.bool,
+  error: PropTypes.string
 };
 
 export default withStyles(styles)(CoreSidebar);

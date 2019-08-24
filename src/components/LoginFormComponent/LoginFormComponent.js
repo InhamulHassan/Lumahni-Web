@@ -12,8 +12,6 @@ import validate from "validate.js";
 import {
   CircularProgress,
   IconButton,
-  InputAdornment,
-  TextField,
   Typography,
   Button,
   withStyles
@@ -31,10 +29,7 @@ import {
 // Shared components
 import {
   MainView,
-  MainViewHeader,
-  MainViewLabel,
   MainViewContent,
-  MainViewFooter
 } from "../core";
 
 import { LoginInputText } from "../LoginInputText";
@@ -57,15 +52,8 @@ class LoginFormComponent extends Component {
       password: "",
       passwordVisibility: false,
       errors: {},
-      isValid: true,
-      loading: false
+      isValid: true
     };
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.authError !== this.props.authError) {
-      this.setState({ loading: false });
-    }
   }
 
   handleClickShowPassword = () => {
@@ -85,10 +73,7 @@ class LoginFormComponent extends Component {
     this.setState(newState);
 
     if (!errors) {
-      this.setState({ loading: true });
       this.props.handleLogin(data);
-    } else {
-      this.setState({ loading: false });
     }
   };
 
@@ -126,31 +111,6 @@ class LoginFormComponent extends Component {
     );
   };
 
-  renderLoginButton = () => {
-    const { classes, authLoading } = this.props;
-
-    console.log('authLoading = ', authLoading);
-
-    if (authLoading) {
-      return (
-        <div className={classes.progressWrapper}>
-          <CircularProgress />
-        </div>
-      );
-    }
-
-    return (
-      <Button
-        color="primary"
-        variant="contained"
-        onClick={this.onSubmit}
-        className={classes.signInButton}
-      >
-        Login
-      </Button>
-    );
-  };
-
   getLoginErrorMessage = () => {
     const { classes, authError } = this.props;
 
@@ -165,13 +125,12 @@ class LoginFormComponent extends Component {
   };
 
   render() {
-    const { classes, className } = this.props;
+    const { classes, className, authLoading } = this.props;
     const {
       errors,
       username,
       password,
-      passwordVisibility,
-      loading
+      passwordVisibility
     } = this.state;
 
     const rootClassName = classNames(classes.root, className);
@@ -233,7 +192,20 @@ class LoginFormComponent extends Component {
               </div>
             </div>
             <div className={classes.buttonContainer}>
-              {this.renderLoginButton()}
+              <div className={classes.buttonWrapper}>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  onClick={this.onSubmit}
+                  className={classes.signInButton}
+                  disabled={authLoading}
+                >
+                  {authLoading ? "" : "Login"}
+                </Button>
+                {authLoading && (
+                  <CircularProgress size={20} className={classes.buttonProgress} />
+                )}
+              </div>
             </div>
           </form>
         </MainViewContent>
@@ -250,7 +222,7 @@ LoginFormComponent.propTypes = {
 const mapStateToProps = state => {
   return {
     accessToken: state.user.accessToken,
-    loading: state.user.dataLoading,
+    authLoading: state.user.dataLoading,
     error: state.user.error
   };
 };

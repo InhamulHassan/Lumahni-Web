@@ -7,7 +7,6 @@ import PropTypes from "prop-types";
 import {
   Divider,
   Icon,
-  IconButton,
   InputBase,
   Paper,
   withStyles

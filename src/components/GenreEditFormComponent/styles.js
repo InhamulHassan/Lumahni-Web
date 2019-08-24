@@ -53,10 +53,16 @@ export default theme => ({
     marginBottom: theme.spacing(1),
     marginTop: theme.spacing(2)
   },
-  progressWrapper: {
-    paddingTop: "48px",
-    paddingBottom: "24px",
+  progressContainer: {
+    position: "fixed",
+    top: "0",
+    left: "0",
+    zIndex: "15",
     display: "flex",
-    justifyContent: "center"
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    justifyContent: "center",
+    alignItems: "center"
   }
 });

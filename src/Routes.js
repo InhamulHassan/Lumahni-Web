@@ -11,7 +11,6 @@ import { Books } from "./views/Books";
 import { Genres } from "./views/Genres";
 import { Authors } from "./views/Authors";
 import { Book } from "./views/Book";
-import { Genre } from "./views/Genre";
 import { Author } from "./views/Author";
 import { Profile } from "./views/Profile";
 import { Settings } from "./views/Settings";
@@ -30,7 +29,6 @@ export default class Routes extends Component {
         <PrivateRoute component={Genres} exact path="/genres" />
         <PrivateRoute component={Authors} exact path="/authors" />
         <PrivateRoute component={Book} exact path="/book" />
-        <PrivateRoute component={Genre} exact path="/genre" />
         <PrivateRoute component={Author} exact path="/author" />
         <PrivateRoute component={Profile} exact path="/profile" />
         <PrivateRoute component={Settings} exact path="/settings" />

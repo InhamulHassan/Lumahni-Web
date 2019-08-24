@@ -11,8 +11,6 @@ import validate from "validate.js";
 // Material components, helpers
 import {
   CircularProgress,
-  IconButton,
-  InputAdornment,
   TextField,
   Typography,
   Button,
@@ -20,10 +18,7 @@ import {
 } from "@material-ui/core";
 
 // Material icons
-import {
-  ErrorOutlineRounded as ErrorIcon,
-  SearchRounded as SearchIcon
-} from "@material-ui/icons";
+import { ErrorOutlineRounded as ErrorIcon } from "@material-ui/icons";
 
 // Shared components
 import {
@@ -73,22 +68,16 @@ class GenreEditFormComponent extends Component {
     this.populateForm();
   }
 
-
-  // componentDidUpdate() {
-  //   if (!!this.props.id) {
-  //     console.log(`props.id -> ${this.props.id}`);
-  //     // this.props.handleClose();
-  //   }
-  // }
-  //
-  // componentWillReceiveProps(newProps) {
-  //   if (newProps.genreDetails !== this.props.genreDetails) {
-  //     console.log("props changed");
-  //   }
-  // }
+  componentDidUpdate(prevProps, prevState) {
+    // TODO: do this by comparing prevprops and this props
+    if (prevProps.editSuccess !== this.props.editSuccess) {
+      this.props.handleClose();
+    }
+  }
 
   componentWillUnmount() {
-    const id = this.state.id;
+    // get the id/grid before reset
+    const { id } = this.props.editedDetails;
     this.props.resetEditGenre();
     // to refresh the genres/books for the Genre View
     this.props.getGenres();
@@ -110,7 +99,6 @@ class GenreEditFormComponent extends Component {
   };
 
   onSubmit = event => {
-    event.preventDefault();
     const {
       id,
       genreName,
@@ -120,10 +108,13 @@ class GenreEditFormComponent extends Component {
       imgThumbnailLink
     } = this.state;
 
+    // cleaning the text from stray HTML tags
+    var cleanedDescription = htmlCleaner(description);
+
     const formData = {
       id,
       genreName,
-      description,
+      description: cleanedDescription,
       imgLink,
       imgLargeLink,
       imgThumbnailLink
@@ -139,9 +130,9 @@ class GenreEditFormComponent extends Component {
   };
 
   populateForm = () => {
-    const { id, name, descr, img_m, img_l, img_s } = this.props.genreData;
+    const { id, name, descr, img_m, img_l, img_s } = this.props.genrePropsData;
 
-    if (Object.keys(this.props.genreData).length > 0) {
+    if (Object.keys(this.props.genrePropsData).length > 0) {
       this.setState({
         id: id,
         genreName: name,
@@ -169,8 +160,21 @@ class GenreEditFormComponent extends Component {
     );
   };
 
+  getErrorMessage = () => {
+    const { classes, error } = this.props;
+
+    return (
+      error && (
+        <Typography className={classes.fieldError} variant="body2">
+          <ErrorIcon className={classes.errorIcon} />
+          {error}
+        </Typography>
+      )
+    );
+  };
+
   render() {
-    const { classes, className, genreData, loading, error } = this.props;
+    const { classes, className, loading } = this.props;
 
     const { errors } = this.state;
 
@@ -185,7 +189,12 @@ class GenreEditFormComponent extends Component {
           />
         </MainViewHeader>
         <MainViewContent noPadding>
-          <form className={classes.form} onSubmit={this.onSubmit}>
+          <form className={classes.form}>
+            {loading && (
+              <div className={classes.progressContainer}>
+                <CircularProgress size={100} />
+              </div>
+            )}
             <div className={classes.group}>
               <Typography className={classes.groupLabel} variant="h6">
                 Genre Information
@@ -294,15 +303,10 @@ class GenreEditFormComponent extends Component {
         </MainViewContent>
         <MainViewFooter className={classes.mainViewFooter}>
           {this.getSubmitErrorMessage()}
-          {loading ? (
-            <div className={classes.progressWrapper}>
-              <CircularProgress />
-            </div>
-          ) : (
-            <Button color="primary" variant="contained" onClick={this.onSubmit}>
-              Edit Genre
-            </Button>
-          )}
+          {this.getErrorMessage()}
+          <Button color="primary" variant="contained" onClick={this.onSubmit}>
+            Edit Genre
+          </Button>
         </MainViewFooter>
       </MainView>
     );
@@ -313,22 +317,24 @@ GenreEditFormComponent.propTypes = {
   className: PropTypes.string,
   classes: PropTypes.object.isRequired,
   open: PropTypes.bool.isRequired,
+  genrePropsData: PropTypes.object.isRequired,
   handleClose: PropTypes.func.isRequired
 };
 
 GenreEditFormComponent.defaultProps = {
   open: false,
-  handleClose: () => {},
-  genreData: {},
-  genreDetails: {},
+  genrePropsData: {},
+  editedDetails: {},
+  editSuccess: false,
   loading: false,
   error: ""
 };
 
 const mapStateToProps = state => {
   return {
-    genreDetails: state.genre.genreDetails,
-    loading: state.genre.dataLoading,
+    editedDetails: state.genre.genreDetails,
+    editSuccess: state.genre.editSuccess,
+    loading: state.genre.editLoading,
     error: state.genre.error
   };
 };

@@ -15,6 +15,7 @@ import {
   IconButton,
   CircularProgress,
   Grid,
+  TablePagination,
   Typography
 } from "@material-ui/core";
 
@@ -28,7 +29,10 @@ import {
 import { CoreLayout } from "../../layout/CoreLayout";
 
 // Shared services
-import { getBooks, resetGetBooks } from "../../redux/actions/bookDbAction";
+import {
+  getBooksByPage,
+  resetGetBooksByPage
+} from "../../redux/actions/bookDbAction";
 
 // Custom components
 import { BookCardGrid, BookToolbar } from "../../components";
@@ -41,25 +45,40 @@ class Books extends Component {
     super(props);
 
     this.signal = true;
-    // this.state = {
-    //   isLoading: true,
-    //   limit: 6,
-    //   products: [],
-    //   productsTotal: 0,
-    //   error: null
-    // };
+    this.state = {
+      page: 0,
+      rowsPerPage: 10
+    };
   }
 
   componentDidMount() {
     this.signal = true;
-    // const { limit } = this.state;
-    this.props.getBooks();
+    const { page, rowsPerPage } = this.state;
+    this.props.getBooksByPage(page, rowsPerPage);
   }
 
   componentWillUnmount() {
     this.signal = false;
-    this.props.resetGetBooks();
+    this.props.resetGetBooksByPage();
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      prevState.page !== this.state.page ||
+      prevState.rowsPerPage !== this.state.rowsPerPage
+    ) {
+      const { page, rowsPerPage } = this.state;
+      this.props.getBooksByPage(page, rowsPerPage);
+    }
+  }
+
+  handleChangePage = (event, page) => {
+    this.setState({ page });
+  };
+
+  handleChangeRowsPerPage = event => {
+    this.setState({ rowsPerPage: event.target.value });
+  };
 
   renderBooks() {
     const { classes, books, loading, error } = this.props;
@@ -84,9 +103,9 @@ class Books extends Component {
     }
 
     return (
-      <Grid container spacing={3}>
+      <Grid container spacing={1}>
         {books.map(book => (
-          <Grid item key={book.id} lg={2} md={4} xs={6}>
+          <Grid item key={book.id} lg={2} md={3} sm={4} xs={6}>
             <Link
               className={classes.link}
               to={{
@@ -106,29 +125,35 @@ class Books extends Component {
   }
 
   render() {
-    const { error, classes } = this.props;
+    const { totalResults, error, classes } = this.props;
+    const { page, rowsPerPage } = this.state;
 
     return (
       <CoreLayout title="Books">
         {error ? (
           <div className={classes.errorWrapper}>
-            <Typography variant="h4">
-              {error || ""}
-            </Typography>
+            <Typography variant="h4">{error || ""}</Typography>
           </div>
         ) : (
           <div className={classes.root}>
             <BookToolbar />
             <div className={classes.content}>{this.renderBooks()}</div>
-            <div className={classes.pagination}>
-              <Typography variant="caption">1-6 of 20</Typography>
-              <IconButton>
-                <ChevronLeftIcon />
-              </IconButton>
-              <IconButton>
-                <ChevronRightIcon />
-              </IconButton>
-            </div>
+            <TablePagination
+              className={classes.tablePagination}
+              backIconButtonProps={{
+                "aria-label": "Previous Page"
+              }}
+              component="div"
+              count={totalResults}
+              nextIconButtonProps={{
+                "aria-label": "Next Page"
+              }}
+              onChangePage={this.handleChangePage}
+              onChangeRowsPerPage={this.handleChangeRowsPerPage}
+              page={page}
+              rowsPerPage={rowsPerPage}
+              rowsPerPageOptions={[5, 10, 25]}
+            />
           </div>
         )}
       </CoreLayout>
@@ -139,14 +164,15 @@ class Books extends Component {
 const mapStateToProps = state => {
   return {
     books: state.book.data,
+    totalResults: state.book.totalResults,
     loading: state.book.dataLoading,
     error: state.book.error
   };
 };
 
 const mapDispatchToProps = {
-  getBooks,
-  resetGetBooks
+  getBooksByPage,
+  resetGetBooksByPage
 };
 
 Books.defaultProps = {

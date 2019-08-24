@@ -3,6 +3,9 @@ import React, { Component } from "react";
 // Externals
 import PropTypes from "prop-types";
 
+// Redux Helpers
+import { connect } from "react-redux";
+
 // Material helpers
 import { withStyles } from "@material-ui/core";
 
@@ -13,7 +16,13 @@ import { Grid } from "@material-ui/core";
 import { CoreLayout } from "../../layout/CoreLayout";
 
 // Custom components
-import { UserDetailView, UserProfileCard } from '../../components';
+import { UserDetailView, UserProfileCard } from "../../components";
+
+// Shared services
+import {
+  getUserDetails,
+  resetGetUserDetails
+} from "../../redux/actions/userDbAction";
 
 // Component styles
 import styles from "./styles";
@@ -21,18 +30,34 @@ import styles from "./styles";
 class Profile extends Component {
   state = { tabIndex: 0 };
 
+  componentDidMount() {
+    this.props.getUserDetails();
+  }
+
+  componentWillUnmount() {
+    this.props.resetGetUserDetails();
+  }
+
   render() {
-    const { classes } = this.props;
+    const { classes, authUser, loading, error } = this.props;
 
     return (
       <CoreLayout title="Profile">
         <div className={classes.root}>
           <Grid container spacing={4}>
             <Grid item lg={4} md={6} xl={4} xs={12}>
-              <UserProfileCard />
+              <UserProfileCard
+                userDetails={authUser}
+                loading={loading}
+                error={error}
+              />
             </Grid>
             <Grid item lg={8} md={6} xl={8} xs={12}>
-              <UserDetailView />
+              <UserDetailView
+                userDetails={authUser}
+                loading={loading}
+                error={error}
+              />
             </Grid>
           </Grid>
         </div>
@@ -42,7 +67,27 @@ class Profile extends Component {
 }
 
 Profile.propTypes = {
-  classes: PropTypes.object.isRequired
+  className: PropTypes.string,
+  classes: PropTypes.object.isRequired,
+  authUser: PropTypes.object.isRequired,
+  loading: PropTypes.bool,
+  error: PropTypes.string
 };
 
-export default withStyles(styles)(Profile);
+const mapStateToProps = state => {
+  return {
+    authUser: state.user.authUser,
+    loading: state.user.dataLoading,
+    error: state.user.error
+  };
+};
+
+const mapDispatchToProps = {
+  getUserDetails,
+  resetGetUserDetails
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(Profile));

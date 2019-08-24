@@ -12,11 +12,17 @@ export default theme => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "flex-start",
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2),
+    flexDirection: "row",
+    [theme.breakpoints.down("xs")]: {
+      flexDirection: "column",
+      alignItems: "flex-start"
+    }
   },
   imageWrapper: {
     height: "140px",
     width: "100px",
+    minWidth: "100px",
     margin: theme.spacing(1),
     marginRight: theme.spacing(3),
     borderRadius: "15px",
@@ -53,7 +59,8 @@ export default theme => ({
   gridContainer: {
     display: "flex",
     flexDirection: "row",
-    flexBasis: "max-content"
+    flexBasis: "100%",
+    flexWrap: "wrap"
   },
   authorContainer: {
     width: "auto",

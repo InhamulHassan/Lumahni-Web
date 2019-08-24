@@ -66,7 +66,7 @@ class GenreEditIcon extends Component {
             <GenreEditFormComponent
               handleClose={this.handleDialogClose}
               open={open}
-              genreData={genreData}
+              genrePropsData={genreData}
             />
           </FormDialog>
         </Dialog>

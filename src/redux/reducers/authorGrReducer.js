@@ -22,7 +22,8 @@ const authorGrReducer = (state = initialState, action) => {
       return {
         ...state,
         dataLoading: action.dataLoading,
-        authorDetails: action.payload
+        authorDetails: action.payload.data,
+        error: action.payload.errors ? action.payload.errors[0].message : "" // when no results are found or other errors
       };
     case GET_AUTHOR_BY_GRID_FAILURE:
       return {
