@@ -55,6 +55,9 @@ export const getGenres = () => {
       dispatch(getGenresSuccess(result.genres));
     } catch (error) {
       console.log(error);
+      if (error.response) {
+        dispatch(getGenresFailure(error.response.message));
+      }
       dispatch(getGenresFailure(error.message));
     }
   };
@@ -96,6 +99,9 @@ export const getGenreById = id => {
       dispatch(getGenreByIdSuccess(result.genre));
     } catch (error) {
       console.log(error);
+      if (error.response) {
+        dispatch(getGenreByIdFailure(error.response.message));
+      }
       dispatch(getGenreByIdFailure(error.message));
     }
   };
@@ -146,6 +152,9 @@ export const addGenre = data => {
         dispatch(addGenreFailure("Failed"));
       }
     } catch (error) {
+      if (error.response) {
+        dispatch(addGenreFailure(error.response.message));
+      }
       dispatch(addGenreFailure(error.message));
     }
   };
@@ -196,6 +205,9 @@ export const editGenre = data => {
         dispatch(editGenreFailure("Failed"));
       }
     } catch (error) {
+      if (error.response) {
+        dispatch(editGenreFailure(error.response.message));
+      }
       dispatch(editGenreFailure(error.message));
     }
   };
@@ -237,6 +249,9 @@ export const getGenreBooks = id => {
       dispatch(getGenreBooksSuccess(data.books));
     } catch (error) {
       console.log(error);
+      if (error.response) {
+        dispatch(getGenreBooksFailure(error.response.message));
+      }
       dispatch(getGenreBooksFailure(error.message));
     }
   };

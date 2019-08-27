@@ -55,6 +55,9 @@ export const getBooks = () => {
       dispatch(getBooksSuccess(result.books));
     } catch (error) {
       console.log(error);
+      if (error.response) {
+        dispatch(getBooksFailure(error.response.message));
+      }
       dispatch(getBooksFailure(error.message));
     }
   };
@@ -96,6 +99,9 @@ export const getBooksByPage = (page, limit) => {
       dispatch(getBooksByPageSuccess(result));
     } catch (error) {
       console.log(error);
+      if (error.response) {
+        dispatch(getBooksByPageFailure(error.response.message));
+      }
       dispatch(getBooksByPageFailure(error.message));
     }
   };
@@ -106,7 +112,6 @@ export const resetGetBooksByPage = () => {
     dispatch(getBooksByPageReset());
   };
 };
-
 
 const getBookByIdPending = () => ({
   type: GET_BOOK_BY_ID_PENDING,
@@ -137,6 +142,9 @@ export const getBookById = id => {
       let result = response.data; //removed await
       dispatch(getBookByIdSuccess(result.book));
     } catch (error) {
+      if (error.response) {
+        dispatch(getBookByIdFailure(error.response.message));
+      }
       dispatch(getBookByIdFailure(error.message));
     }
   };
@@ -191,6 +199,9 @@ export const addBook = data => {
         dispatch(addBookFailure("Failed"));
       }
     } catch (error) {
+      if (error.response) {
+        dispatch(addBookFailure(error.response.message));
+      }
       dispatch(addBookFailure(error.message));
     }
   };
@@ -245,6 +256,9 @@ export const editBook = data => {
         dispatch(editBookFailure("Failed"));
       }
     } catch (error) {
+      if (error.response) {
+        dispatch(editBookFailure(error.response.message));
+      }
       dispatch(editBookFailure(error.message));
     }
   };

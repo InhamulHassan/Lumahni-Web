@@ -133,10 +133,10 @@ const mapDispatchToProps = {
 };
 
 export default compose(
-  withStyles(styles),
+  withWidth(),
   connect(
     mapStateToProps,
     mapDispatchToProps
   ),
-  withWidth()
+  withStyles(styles)
 )(CoreLayout);

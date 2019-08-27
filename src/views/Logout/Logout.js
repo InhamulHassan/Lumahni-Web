@@ -23,7 +23,11 @@ import styles from "./styles";
 
 class Logout extends Component {
   componentDidMount() {
-    this.props.userLogout();
+    if (localStorage.getItem("auth_token")) {
+      this.props.userLogout();
+    } else {
+      this.props.history.push("/login");
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {

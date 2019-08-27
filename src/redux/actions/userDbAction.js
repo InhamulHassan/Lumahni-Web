@@ -105,6 +105,9 @@ export const userLogout = () => {
         dispatch(userLogoutFailure("Logout failed"));
       }
     } catch (error) {
+      if (error.response) {
+        dispatch(userLogoutFailure(error.response.message));
+      }
       dispatch(userLogoutFailure(error.message));
     }
   };
@@ -150,7 +153,7 @@ export const getUserDetails = () => {
       }
     } catch (error) {
       if (error.response) {
-        dispatch(getUserDetailsFailure(error.response.data.message));
+        dispatch(getUserDetailsFailure(error.response.message));
       } else {
         dispatch(getUserDetailsFailure(error.message));
       }
@@ -202,7 +205,7 @@ export const passwordReset = data => {
       }
     } catch (error) {
       if (error.response) {
-        dispatch(passwordResetFailure(error.response.data.message));
+        dispatch(passwordResetFailure(error.response.message));
       } else {
         dispatch(passwordResetFailure(error.message));
       }

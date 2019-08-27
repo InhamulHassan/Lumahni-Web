@@ -51,6 +51,9 @@ export const getMembers = () => {
       dispatch(getMembersSuccess(result.members));
     } catch (error) {
       console.log(error);
+      if (error.response) {
+        dispatch(getMembersFailure(error.response.message));
+      }
       dispatch(getMembersFailure(error.message));
     }
   };
@@ -91,6 +94,9 @@ export const getMemberById = id => {
       let result = response.data; // removed await
       dispatch(getMemberByIdSuccess(result.member));
     } catch (error) {
+      if (error.response) {
+        dispatch(getMemberByIdFailure(error.response.message));
+      }
       dispatch(getMemberByIdFailure(error.message));
     }
   };
@@ -143,6 +149,9 @@ export const addMember = data => {
         dispatch(addMemberFailure("Failed"));
       }
     } catch (error) {
+      if (error.response) {
+        dispatch(addMemberFailure(error.response.message));
+      }
       dispatch(addMemberFailure(error.message));
     }
   };
@@ -196,6 +205,9 @@ export const editMember = data => {
         dispatch(editMemberFailure("Member Edit Failed"));
       }
     } catch (error) {
+      if (error.response) {
+        dispatch(editMemberFailure(error.response.message));
+      }
       dispatch(editMemberFailure(error.message));
     }
   };

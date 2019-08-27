@@ -17,35 +17,16 @@ import {
   PASSWORD_RESET_RESET
 } from "../actions/types";
 
-// const initialState = {
-//   dataLoading: false,
-//   authToken: null,
-//   loggedIn: false,
-//   error: ""
-// };
-
-let auth = JSON.parse(localStorage.getItem("auth_token"));
-const initialState = auth
-  ? {
-      dataLoading: false,
-      authToken: auth,
-      authUser: {},
-      loggedIn: true,
-      resetSuccess: false,
-      resetLoading: false,
-      resetError: "",
-      error: ""
-    }
-  : {
-      dataLoading: false,
-      authToken: null,
-      authUser: {},
-      loggedIn: false,
-      resetSuccess: false,
-      resetLoading: false,
-      resetError: "",
-      error: ""
-    };
+const initialState = {
+  dataLoading: false,
+  authToken: null,
+  authUser: null,
+  loggedIn: false,
+  resetSuccess: false,
+  resetLoading: false,
+  resetError: "",
+  error: ""
+};
 
 const userDbReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -83,7 +64,7 @@ const userDbReducer = (state = initialState, action) => {
       return {
         ...state,
         dataLoading: action.dataLoading,
-        authToken: {},
+        authToken: null,
         loggedIn: false
       };
     case LOGOUT_USER_FAILURE:

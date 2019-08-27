@@ -47,14 +47,19 @@ const cityList = [
 ];
 
 class UserDetailView extends Component {
-  state = {
-    firstName: "John",
-    lastName: "Doe",
-    email: "contact@lumahni.io",
-    phone: "+94770022063",
-    city: "Colombo",
-    province: "Western"
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      firstName: "John",
+      lastName: "Doe",
+      email: "contact@lumahni.io",
+      phone: "+94770022063",
+      city: "Colombo",
+      province: "Western"
+    };
+  }
+
 
   handleChange = e => {
     this.setState({
@@ -118,7 +123,7 @@ class UserDetailView extends Component {
                 required
                 select
                 SelectProps={{ native: true }}
-                value={""}
+                value={this.state.city}
                 variant="outlined"
               >
                 {cityList.map(option => (
